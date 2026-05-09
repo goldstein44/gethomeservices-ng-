@@ -1,0 +1,23 @@
+[
+  {"id":1,"name":"Electrician","slug":"electrician"},
+  {"id":2,"name":"Plumber","slug":"plumber"},
+  {"id":3,"name":"Gas Cooker Repair","slug":"gas-cooker-repair"},
+  {"id":4,"name":"AC Technician","slug":"ac-technician"},
+  {"id":5,"name":"Home Cleaning","slug":"home-cleaning"},
+  {"id":6,"name":"Barbing","slug":"barbing"},
+  {"id":7,"name":"Hair & Salon","slug":"hair-salon"},
+  {"id":8,"name":"Car Wash","slug":"car-wash"},
+  {"id":9,"name":"Private Chef","slug":"private-chef"},
+  {"id":10,"name":"Laundry/Dry Cleaning","slug":"laundry-dry-cleaning"},
+  {"id":11,"name":"Massage Therapy","slug":"massage-therapy"},
+  {"id":12,"name":"Screeding & Painting","slug":"screeding-painting"},
+  {"id":13,"name":"Pest Control","slug":"pest-control"},
+  {"id":14,"name":"Sofa Cleaning","slug":"sofa-cleaning"},
+  {"id":15,"name":"DSTV Installation","slug":"dstv-installation"},
+  {"id":16,"name":"Solar Installation","slug":"solar-installation"},
+  {"id":17,"name":"TV Wall Installation","slug":"tv-wall-installation"},
+  {"id":18,"name":"Kitchen Cabinet","slug":"kitchen-cabinet"},
+  {"id":19,"name":"Automechanics","slug":"automechanics"},
+  {"id":20,"name":"Tiler","slug":"tiler"},
+  {"id":21,"name":"CCTV Camera Installation","slug":"cctv-camera-installation"}
+]
