@@ -92,7 +92,7 @@ export default function Home() {
         </form>
       </div>
 
-      {/* CATEGORIES - Limited to 8 */}
+      {/* POPULAR SERVICES - Limited to 8 */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="flex justify-between items-end mb-10">
           <div>
@@ -111,11 +111,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURED PROVIDERS */}
+      {/* FEATURED PROVIDERS - Improved Visibility */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold tracking-tight text-center mb-4">Featured Providers</h2>
-          <p className="text-center text-gray-600 max-w-md mx-auto">Verified professionals ready for your next job</p>
+          <h2 className="text-4xl font-bold tracking-tight text-center mb-4 text-gray-900">
+            Featured Providers
+          </h2>
+          <p className="text-center text-gray-600 max-w-md mx-auto">
+            Verified professionals ready for your next job
+          </p>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
             {featuredProviders.map((provider) => (
