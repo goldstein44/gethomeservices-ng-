@@ -8,14 +8,9 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "GetHomeServices NG - Trusted Home Services in Lagos Island",
-  description: "Connect directly with verified electricians, plumbers, AC technicians, cleaners and more across Lekki, Ajah, Victoria Island, Ikoyi and all Lagos Island areas.",
+  description: "Connect directly with verified electricians, plumbers, AC technicians, cleaners and more across Lagos Island. Book instantly via WhatsApp.",
   keywords: ["home services Lagos", "electrician Lekki", "plumber Ajah", "AC repair Victoria Island", "GetHomeServices NG"],
   authors: [{ name: "Kaffa Technologies Ltd" }],
-  openGraph: {
-    title: "GetHomeServices NG - Home Services Marketplace",
-    description: "Find and book trusted service providers in Lagos Island instantly via WhatsApp.",
-    images: [{ url: "/images/og-image.jpg" }], // You can add an OG image later
-  },
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
@@ -30,9 +25,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-      </head>
       <body className={inter.className}>
         <Navbar />
         {children}

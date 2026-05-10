@@ -24,7 +24,7 @@ export default function Navbar() {
             <Link href="/providers/apply" className="hover:text-blue-600 transition">List Your Service</Link>
           </div>
 
-          {/* Mobile Hamburger Menu */}
+          {/* Mobile Hamburger */}
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)} 
             className="md:hidden text-gray-700 p-2"
@@ -35,13 +35,19 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Improved Visibility */}
         {isMenuOpen && (
-          <div className="md:hidden mt-4 py-4 border-t">
-            <div className="flex flex-col gap-4 text-sm font-medium">
-              <Link href="/" className="hover:text-blue-600">Home</Link>
-              <Link href="/services/electrician" className="hover:text-blue-600">Services</Link>
-              <Link href="/providers/apply" className="hover:text-blue-600">List Your Service</Link>
+          <div className="md:hidden mt-4 py-5 border-t bg-white">
+            <div className="flex flex-col gap-5 text-base font-medium text-gray-800 px-2">
+              <Link href="/" className="hover:text-blue-600 py-2 transition" onClick={() => setIsMenuOpen(false)}>
+                Home
+              </Link>
+              <Link href="/services/electrician" className="hover:text-blue-600 py-2 transition" onClick={() => setIsMenuOpen(false)}>
+                Services
+              </Link>
+              <Link href="/providers/apply" className="hover:text-blue-600 py-2 transition" onClick={() => setIsMenuOpen(false)}>
+                List Your Service
+              </Link>
             </div>
           </div>
         )}

@@ -58,26 +58,32 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SEARCH BAR */}
+      {/* SEARCH BAR - Improved Visibility */}
       <div className="max-w-4xl mx-auto -mt-8 relative z-10 px-6">
         <form onSubmit={handleSearch} className="bg-white rounded-3xl shadow-xl p-8">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-2">What service do you need?</label>
-              <select name="service" className="w-full border border-gray-300 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:border-blue-600">
-                <option value="">Select a service...</option>
+              <label className="text-sm font-semibold text-gray-800 block mb-2">What service do you need?</label>
+              <select 
+                name="service" 
+                className="w-full border border-gray-400 rounded-2xl px-5 py-4 text-lg text-gray-900 focus:outline-none focus:border-blue-600"
+              >
+                <option value="" className="text-gray-400">Select a service...</option>
                 {categoriesData.map(cat => (
-                  <option key={cat.id} value={cat.slug}>{cat.name}</option>
+                  <option key={cat.id} value={cat.slug} className="text-gray-900">{cat.name}</option>
                 ))}
               </select>
             </div>
             
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-2">Your location in Lagos Island</label>
-              <select name="location" className="w-full border border-gray-300 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:border-blue-600">
-                <option value="">Select area...</option>
+              <label className="text-sm font-semibold text-gray-800 block mb-2">Your location in Lagos Island</label>
+              <select 
+                name="location" 
+                className="w-full border border-gray-400 rounded-2xl px-5 py-4 text-lg text-gray-900 focus:outline-none focus:border-blue-600"
+              >
+                <option value="" className="text-gray-400">Select area...</option>
                 {locationsData.map(loc => (
-                  <option key={loc.id} value={loc.slug}>{loc.name}</option>
+                  <option key={loc.id} value={loc.slug} className="text-gray-900">{loc.name}</option>
                 ))}
               </select>
             </div>
@@ -92,7 +98,7 @@ export default function Home() {
         </form>
       </div>
 
-      {/* POPULAR SERVICES - Limited to 8 */}
+      {/* POPULAR SERVICES - Limited */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="flex justify-between items-end mb-10">
           <div>
@@ -111,7 +117,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURED PROVIDERS - Improved Visibility */}
+      {/* FEATURED PROVIDERS */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl font-bold tracking-tight text-center mb-4 text-gray-900">
