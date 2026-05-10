@@ -55,12 +55,12 @@ export default function ApplyPage() {
         setSelectedServices([]);
         window.location.href = "/providers/thank-you";
       } else {
-        console.error(result);
-        alert(`❌ Submission failed: ${result.message || "Request too long or invalid. Try with smaller files."}`);
+        console.error("Web3Forms Error:", result);
+        alert(`❌ Submission failed: ${result.message || "Request too long. Try smaller files or contact us on WhatsApp."}`);
       }
     } catch (error) {
-      console.error(error);
-      alert("❌ Network error. Please check your connection and try again.");
+      console.error("Submission Error:", error);
+      alert("❌ Network error. Please check your internet connection and try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -69,14 +69,15 @@ export default function ApplyPage() {
   return (
     <div className="max-w-3xl mx-auto px-6 py-16">
       <div className="text-center mb-12">
-        <h1 className="text-5xl font-bold tracking-tight">Join Our Network of Verified Professionals</h1>
-        <p className="text-xl text-gray-600 mt-4 max-w-lg mx-auto">
+        <h1 className="text-5xl font-bold tracking-tight text-gray-900">Join Our Network of Verified Professionals</h1>
+        <p className="text-xl text-gray-700 mt-4 max-w-lg mx-auto">
           Get consistent jobs across Lagos Island. We connect you with real clients.
         </p>
       </div>
 
-      <div className="bg-white border rounded-3xl p-10">
+      <div className="bg-white border border-gray-300 rounded-3xl p-10">
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-12">
+
           {/* 1. Provider Type */}
           <div>
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">1. Provider Type</h2>
@@ -92,7 +93,7 @@ export default function ApplyPage() {
             </div>
           </div>
 
-          {/* 2. Personal Information */}
+          {/* 2. Personal / Business Information */}
           <div>
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">2. Personal / Business Information</h2>
             <div className="grid md:grid-cols-2 gap-6">
@@ -103,14 +104,19 @@ export default function ApplyPage() {
             </div>
           </div>
 
-          {/* 3. Services */}
+          {/* 3. Services You Offer */}
           <div>
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">3. Services You Offer</h2>
             <p className="text-sm text-gray-600 mb-3">Select all services you specialize in</p>
 
-            <div onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="border border-gray-400 rounded-2xl px-6 py-4 bg-white flex items-center justify-between cursor-pointer hover:border-blue-600 transition text-gray-900">
+            <div 
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="border border-gray-400 rounded-2xl px-6 py-4 bg-white flex items-center justify-between cursor-pointer hover:border-blue-600 transition text-gray-900"
+            >
               <span>
-                {selectedServices.length > 0 ? `${selectedServices.length} service${selectedServices.length > 1 ? 's' : ''} selected` : "Select services (tap here)"}
+                {selectedServices.length > 0 
+                  ? `${selectedServices.length} service${selectedServices.length > 1 ? 's' : ''} selected` 
+                  : "Select services (tap here)"}
               </span>
               <span className="text-gray-400">▼</span>
             </div>
@@ -118,7 +124,11 @@ export default function ApplyPage() {
             {isDropdownOpen && (
               <div className="mt-2 border border-gray-300 rounded-3xl bg-white max-h-80 overflow-auto shadow-lg">
                 {allServices.map((service) => (
-                  <div key={service} onClick={() => toggleService(service)} className={`px-6 py-4 border-b border-gray-100 flex items-center gap-3 cursor-pointer hover:bg-gray-50 ${selectedServices.includes(service) ? 'bg-blue-50' : ''}`}>
+                  <div
+                    key={service}
+                    onClick={() => toggleService(service)}
+                    className={`px-6 py-4 border-b border-gray-100 flex items-center gap-3 cursor-pointer hover:bg-gray-50 ${selectedServices.includes(service) ? 'bg-blue-50' : ''}`}
+                  >
                     <input type="checkbox" checked={selectedServices.includes(service)} readOnly className="w-5 h-5 accent-blue-600 pointer-events-none" />
                     <span className="text-gray-800">{service}</span>
                   </div>
@@ -128,7 +138,7 @@ export default function ApplyPage() {
 
             {selectedServices.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
-                {selectedServices.map(service => (
+                {selectedServices.map((service) => (
                   <div key={service} className="bg-blue-100 text-blue-700 px-4 py-2 rounded-2xl text-sm flex items-center gap-2">
                     {service}
                     <button type="button" onClick={() => removeService(service)} className="font-bold">×</button>
@@ -147,20 +157,68 @@ export default function ApplyPage() {
             </select>
           </div>
 
-          {/* Verification Documents */}
+          {/* 4. Verification Documents */}
           <div>
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">4. Verification Documents</h2>
-            {/* ... keep your existing verification section as is, or I can update it if needed */}
-            {/* For now, I'm keeping it to save space. Let me know if you want it updated too. */}
+            
+            {providerType === "individual" ? (
+              <div className="space-y-8">
+                <div>
+                  <label className="block font-medium mb-2 text-gray-800">National Identification Number (NIN)</label>
+                  <input type="text" name="nin" placeholder="Enter your NIN" required className="border border-gray-400 rounded-2xl px-6 py-4 w-full text-gray-900" />
+                </div>
+                <div>
+                  <label className="block font-medium mb-3 text-gray-800">NIN Slip</label>
+                  <input type="file" name="nin_slip" accept="image/*,.pdf" required className="w-full border border-gray-400 rounded-2xl px-6 py-4 text-gray-900" />
+                </div>
+                <div>
+                  <label className="block font-medium mb-3 text-gray-800">Full Face Photograph</label>
+                  <input type="file" name="face_photo" accept="image/*" required className="w-full border border-gray-400 rounded-2xl px-6 py-4 text-gray-900" />
+                </div>
+                <div>
+                  <label className="block font-medium mb-3 text-gray-800">Recent Utility Bill</label>
+                  <input type="file" name="utility_bill" accept="image/*,.pdf" required className="w-full border border-gray-400 rounded-2xl px-6 py-4 text-gray-900" />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-8">
+                <div>
+                  <label className="block font-medium mb-2 text-gray-800">Owner’s National Identification Number (NIN)</label>
+                  <input type="text" name="owner_nin" placeholder="Enter owner’s NIN" required className="border border-gray-400 rounded-2xl px-6 py-4 w-full text-gray-900" />
+                </div>
+                <div>
+                  <label className="block font-medium mb-3 text-gray-800">CAC Certificate</label>
+                  <input type="file" name="cac_certificate" accept="image/*,.pdf" required className="w-full border border-gray-400 rounded-2xl px-6 py-4 text-gray-900" />
+                </div>
+                <div>
+                  <label className="block font-medium mb-3 text-gray-800">Owner’s NIN Slip</label>
+                  <input type="file" name="owner_nin_slip" accept="image/*,.pdf" required className="w-full border border-gray-400 rounded-2xl px-6 py-4 text-gray-900" />
+                </div>
+                <div>
+                  <label className="block font-medium mb-3 text-gray-800">Recent Utility Bill</label>
+                  <input type="file" name="utility_bill" accept="image/*,.pdf" required className="w-full border border-gray-400 rounded-2xl px-6 py-4 text-gray-900" />
+                </div>
+              </div>
+            )}
+
+            <input type="text" name="residential_address" placeholder="Residential / Business Address in Lagos Island" required className="border border-gray-400 rounded-2xl px-6 py-4 w-full mt-8 text-gray-900" />
           </div>
 
-          {/* Terms */}
+          {/* 5. Terms & Conditions */}
           <div className="bg-gray-50 border rounded-3xl p-8">
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">5. Terms &amp; Conditions</h2>
-            {/* Terms content remains the same */}
+            <div className="prose text-sm text-gray-700 space-y-4">
+              <p>By submitting this application, you agree to the following:</p>
+              <ol className="list-decimal pl-5 space-y-3">
+                <li>We charge a <strong>20% commission</strong> on every job we refer to you.</li>
+                <li>All client payments must be sent to GetHomeServices NG first.</li>
+                <li>Breach of terms may result in warning, suspension or removal.</li>
+              </ol>
+            </div>
+
             <label className="flex items-start gap-3 mt-8 cursor-pointer">
               <input type="checkbox" name="terms_agreed" required className="mt-1 w-5 h-5 accent-blue-600" />
-              <span className="text-sm text-gray-800">I have read and agree to the Terms &amp; Conditions</span>
+              <span className="text-sm text-gray-800">I have read and fully agree to the Terms &amp; Conditions above.</span>
             </label>
           </div>
 
