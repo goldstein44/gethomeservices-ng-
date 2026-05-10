@@ -6,6 +6,7 @@ export default function ApplyPage() {
   const [providerType, setProviderType] = useState<"individual" | "business">("individual");
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const allServices = [
     "Electrician", "Plumber", "Gas Cooker Repair", "AC Technician", "Home Cleaning",
@@ -29,6 +30,8 @@ export default function ApplyPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
     const form = e.currentTarget;
     const formData = new FormData(form);
 
@@ -44,15 +47,22 @@ export default function ApplyPage() {
         body: formData,
       });
 
+      const result = await response.json();
+
       if (response.ok) {
+        alert("✅ Application submitted successfully!");
         form.reset();
         setSelectedServices([]);
         window.location.href = "/providers/thank-you";
       } else {
-        alert("Submission failed. Please try again or contact us on WhatsApp.");
+        console.error("Web3Forms Error:", result);
+        alert(`❌ Submission failed: ${result.message || "Please try again or contact us on WhatsApp"}`);
       }
-    } catch (error) {
-      alert("Something went wrong. Please try again.");
+    } catch (error: any) {
+      console.error("Submission Error:", error);
+      alert("❌ Network error. Please check your internet connection and try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -67,8 +77,7 @@ export default function ApplyPage() {
 
       <div className="bg-white border rounded-3xl p-10">
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-12">
-
-          {/* 1. Provider Type */}
+          {/* Provider Type */}
           <div>
             <h2 className="font-semibold text-2xl mb-6">1. Provider Type</h2>
             <div className="flex gap-6">
@@ -83,7 +92,7 @@ export default function ApplyPage() {
             </div>
           </div>
 
-          {/* 2. Personal / Business Information */}
+          {/* Personal Information */}
           <div>
             <h2 className="font-semibold text-2xl mb-6">2. Personal / Business Information</h2>
             <div className="grid md:grid-cols-2 gap-6">
@@ -94,19 +103,14 @@ export default function ApplyPage() {
             </div>
           </div>
 
-          {/* 3. Services You Offer */}
+          {/* Services */}
           <div>
             <h2 className="font-semibold text-2xl mb-6">3. Services You Offer</h2>
             <p className="text-sm text-gray-600 mb-3">Select all services you specialize in</p>
 
-            <div 
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="border border-gray-300 rounded-2xl px-6 py-4 bg-white flex items-center justify-between cursor-pointer hover:border-blue-500 transition"
-            >
+            <div onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="border border-gray-300 rounded-2xl px-6 py-4 bg-white flex items-center justify-between cursor-pointer hover:border-blue-500 transition">
               <span className="text-base">
-                {selectedServices.length > 0 
-                  ? `${selectedServices.length} service${selectedServices.length > 1 ? 's' : ''} selected` 
-                  : "Select services (tap here)"}
+                {selectedServices.length > 0 ? `${selectedServices.length} service${selectedServices.length > 1 ? 's' : ''} selected` : "Select services (tap here)"}
               </span>
               <span className="text-gray-400">▼</span>
             </div>
@@ -114,11 +118,7 @@ export default function ApplyPage() {
             {isDropdownOpen && (
               <div className="mt-2 border border-gray-200 rounded-3xl bg-white max-h-80 overflow-auto shadow-lg">
                 {allServices.map((service) => (
-                  <div
-                    key={service}
-                    onClick={() => toggleService(service)}
-                    className={`px-6 py-4 border-b border-gray-100 last:border-none flex items-center gap-3 cursor-pointer hover:bg-gray-50 ${selectedServices.includes(service) ? 'bg-blue-50' : ''}`}
-                  >
+                  <div key={service} onClick={() => toggleService(service)} className={`px-6 py-4 border-b border-gray-100 flex items-center gap-3 cursor-pointer hover:bg-gray-50 ${selectedServices.includes(service) ? 'bg-blue-50' : ''}`}>
                     <input type="checkbox" checked={selectedServices.includes(service)} readOnly className="w-5 h-5 accent-blue-600 pointer-events-none" />
                     <span>{service}</span>
                   </div>
@@ -128,10 +128,10 @@ export default function ApplyPage() {
 
             {selectedServices.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
-                {selectedServices.map((service) => (
+                {selectedServices.map(service => (
                   <div key={service} className="bg-blue-100 text-blue-700 px-4 py-2 rounded-2xl text-sm flex items-center gap-2">
                     {service}
-                    <button type="button" onClick={() => removeService(service)} className="text-blue-500 hover:text-blue-700 font-bold">×</button>
+                    <button type="button" onClick={() => removeService(service)} className="font-bold">×</button>
                   </div>
                 ))}
               </div>
@@ -147,10 +147,9 @@ export default function ApplyPage() {
             </select>
           </div>
 
-          {/* 4. Verification Documents */}
+          {/* Verification Documents */}
           <div>
             <h2 className="font-semibold text-2xl mb-6">4. Verification Documents</h2>
-            
             {providerType === "individual" ? (
               <div className="space-y-8">
                 <div>
@@ -190,31 +189,32 @@ export default function ApplyPage() {
                 </div>
               </div>
             )}
-
             <input type="text" name="residential_address" placeholder="Residential / Business Address in Lagos Island" required className="border rounded-2xl px-6 py-4 w-full mt-8" />
           </div>
 
-          {/* 5. Terms & Conditions */}
+          {/* Terms */}
           <div className="bg-gray-50 border rounded-3xl p-8">
             <h2 className="font-semibold text-2xl mb-6">5. Terms &amp; Conditions</h2>
             <div className="prose text-sm text-gray-700 space-y-4">
               <p>By submitting this application, you agree to the following:</p>
               <ol className="list-decimal pl-5 space-y-3">
-                <li>We charge a <strong>20% commission</strong> on every job we refer to you.</li>
-                <li>All client payments must be sent to GetHomeServices NG first. We deduct our 20% and send you the remaining 80% within 5 minutes of receipt.</li>
-                <li>If a client pays you directly, you must send us our 20% commission on the same day along with proof of payment.</li>
-                <li>Any client complaint or breach of terms may result in suspension or removal.</li>
+                <li>We charge a <strong>20% commission</strong> on every job referred.</li>
+                <li>You must maintain high professional standards.</li>
+                <li>Breach of terms may lead to suspension or removal.</li>
               </ol>
             </div>
-
             <label className="flex items-start gap-3 mt-8 cursor-pointer">
               <input type="checkbox" name="terms_agreed" required className="mt-1 w-5 h-5 accent-blue-600" />
-              <span className="text-sm text-gray-700">I have read and agree to the Terms &amp; Conditions above.</span>
+              <span className="text-sm text-gray-700">I have read and agree to the Terms &amp; Conditions</span>
             </label>
           </div>
 
-          <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-3xl text-xl font-semibold transition">
-            Submit Application for Review
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-6 rounded-3xl text-xl font-semibold transition"
+          >
+            {isSubmitting ? "Submitting Application..." : "Submit Application for Review"}
           </button>
         </form>
       </div>

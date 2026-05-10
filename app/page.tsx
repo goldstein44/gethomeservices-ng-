@@ -1,4 +1,4 @@
-"use client";   
+"use client";
 
 import Link from "next/link";
 import CategoryCard from "@/components/CategoryCard";
@@ -13,9 +13,7 @@ import locationsData from "@/data/locations.json";
 export default function Home() {
   const featuredProviders = providersData.slice(0, 6);
   const recentReviews = reviewsData.slice(0, 6);
-  const popularLocations = locationsData.slice(0, 12);
 
-  // Handle search form submission
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -27,7 +25,7 @@ export default function Home() {
     } else if (serviceSlug) {
       window.location.href = `/services/${serviceSlug}`;
     } else {
-      alert("Please select both a service and a location");
+      alert("Please select a service");
     }
   };
 
@@ -60,13 +58,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SEARCH BAR - Dynamic & Client-Side */}
+      {/* SEARCH BAR */}
       <div className="max-w-4xl mx-auto -mt-8 relative z-10 px-6">
         <form onSubmit={handleSearch} className="bg-white rounded-3xl shadow-xl p-8">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="text-sm font-medium text-gray-600 block mb-2">What service do you need?</label>
-              <select name="service" className="w-full border border-gray-200 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:border-blue-500">
+              <label className="text-sm font-medium text-gray-700 block mb-2">What service do you need?</label>
+              <select name="service" className="w-full border border-gray-300 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:border-blue-600">
                 <option value="">Select a service...</option>
                 {categoriesData.map(cat => (
                   <option key={cat.id} value={cat.slug}>{cat.name}</option>
@@ -75,8 +73,8 @@ export default function Home() {
             </div>
             
             <div>
-              <label className="text-sm font-medium text-gray-600 block mb-2">Your location in Lagos Island</label>
-              <select name="location" className="w-full border border-gray-200 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:border-blue-500">
+              <label className="text-sm font-medium text-gray-700 block mb-2">Your location in Lagos Island</label>
+              <select name="location" className="w-full border border-gray-300 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:border-blue-600">
                 <option value="">Select area...</option>
                 {locationsData.map(loc => (
                   <option key={loc.id} value={loc.slug}>{loc.name}</option>
@@ -91,52 +89,30 @@ export default function Home() {
           >
             Find Providers Near Me
           </button>
-          <p className="text-center text-xs text-gray-400 mt-4">Message providers directly via WhatsApp • Instant response</p>
         </form>
       </div>
 
-      {/* CATEGORIES */}
+      {/* CATEGORIES - Limited to 8 */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="flex justify-between items-end mb-10">
           <div>
             <h2 className="text-4xl font-bold tracking-tight">Popular Services</h2>
-            <p className="text-gray-600 mt-2">20+ categories • Available across all Lagos Island areas</p>
+            <p className="text-gray-600 mt-2">Choose from 21 professional services</p>
           </div>
           <Link href="/services/electrician" className="text-blue-600 font-medium flex items-center gap-2 hover:underline">
-            View all services <span>→</span>
+            View all services →
           </Link>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {categoriesData.map((category) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {categoriesData.slice(0, 8).map((category) => (
             <CategoryCard key={category.id} category={category} />
           ))}
         </div>
       </section>
 
-      {/* POPULAR LOCATIONS */}
-      <section className="bg-gray-50 py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold tracking-tight text-center mb-4">Popular Locations</h2>
-          <p className="text-center text-gray-600 max-w-md mx-auto">Choose your area for hyper-local service providers</p>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-12">
-            {popularLocations.map((location) => (
-              <Link
-                key={location.id}
-                href={`/locations/${location.slug}`}
-                className="bg-white border border-gray-200 rounded-3xl p-6 text-center hover:border-blue-300 hover:shadow-md transition"
-              >
-                <h3 className="font-semibold text-lg">{location.name}</h3>
-                <p className="text-sm text-gray-500 mt-1">View providers →</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* FEATURED PROVIDERS */}
-      <section className="py-20">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl font-bold tracking-tight text-center mb-4">Featured Providers</h2>
           <p className="text-center text-gray-600 max-w-md mx-auto">Verified professionals ready for your next job</p>
@@ -156,10 +132,10 @@ export default function Home() {
 
         <div className="grid md:grid-cols-4 gap-8">
           {[
-            { step: "1", title: "Search & Browse", desc: "Find service providers by category and your exact location" },
+            { step: "1", title: "Search & Browse", desc: "Find service providers by category and location" },
             { step: "2", title: "View Profiles", desc: "See services, photos, reviews and past work" },
-            { step: "3", title: "Message via WhatsApp", desc: "Contact the provider directly — they respond instantly" },
-            { step: "4", title: "Get It Done", desc: "Book, get the job completed and leave a review" }
+            { step: "3", title: "Message via WhatsApp", desc: "Contact the provider directly" },
+            { step: "4", title: "Get It Done", desc: "Book and receive quality service" }
           ].map((item, i) => (
             <div key={i} className="text-center">
               <div className="mx-auto w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl font-bold mb-6">
@@ -172,7 +148,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* REVIEWS TEASER */}
+      {/* REVIEWS */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <h2 className="text-4xl font-bold tracking-tight text-center mb-12">What Our Clients Say</h2>
         <div className="grid md:grid-cols-3 gap-6">
@@ -186,7 +162,7 @@ export default function Home() {
       <div className="bg-emerald-600 text-white py-20 text-center">
         <div className="max-w-2xl mx-auto px-6">
           <h2 className="text-4xl font-bold">Ready to get your home service sorted?</h2>
-          <p className="mt-6 text-xl opacity-90">Message any provider directly on WhatsApp and get it done fast.</p>
+          <p className="mt-6 text-xl opacity-90">Message verified providers directly on WhatsApp.</p>
           <a 
             href="https://wa.me/2348125146666?text=Hi%2C%20I%20need%20a%20home%20service%20in%20Lagos%20Island"
             target="_blank"
