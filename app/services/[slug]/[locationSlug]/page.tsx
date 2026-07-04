@@ -5,22 +5,25 @@ import providersData from "@/data/providers.json";
 import locationsData from "@/data/locations.json";
 
 interface Props {
-  params: Promise<{ serviceSlug: string; locationSlug: string }>;
+  params: Promise<{ slug: string; locationSlug: string }>;
 }
 
 export async function generateStaticParams() {
   const params = [];
   for (const category of categoriesData) {
     for (const location of locationsData) {
-      params.push({ serviceSlug: category.slug, locationSlug: location.slug });
+      params.push({ 
+        slug: category.slug, 
+        locationSlug: location.slug 
+      });
     }
   }
   return params;
 }
 
 export async function generateMetadata({ params }: Props) {
-  const { serviceSlug, locationSlug } = await params;
-  const category = categoriesData.find(c => c.slug === serviceSlug);
+  const { slug, locationSlug } = await params;
+  const category = categoriesData.find(c => c.slug === slug);
   const location = locationsData.find(l => l.slug === locationSlug);
 
   if (!category || !location) return { title: "Page Not Found" };
@@ -32,9 +35,9 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function ServiceLocationPage({ params }: Props) {
-  const { serviceSlug, locationSlug } = await params;
+  const { slug, locationSlug } = await params;
 
-  const category = categoriesData.find(c => c.slug === serviceSlug);
+  const category = categoriesData.find(c => c.slug === slug);
   const location = locationsData.find(l => l.slug === locationSlug);
 
   if (!category || !location) notFound();
