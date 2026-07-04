@@ -76,7 +76,6 @@ export default function ApplyPage() {
         }
       }
 
-      // Insert into database
       const { error } = await supabase
         .from('provider_applications')
         .insert([{
@@ -126,11 +125,25 @@ export default function ApplyPage() {
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">1. Provider Type <span className="text-red-500">*</span></h2>
             <div className="flex gap-6">
               <label className="flex items-center gap-3 cursor-pointer">
-                <input type="radio" name="provider_type" value="individual" checked={providerType === "individual"} onChange={() => setProviderType("individual")} className="w-5 h-5 accent-blue-600" />
+                <input 
+                  type="radio" 
+                  name="provider_type" 
+                  value="individual" 
+                  checked={providerType === "individual"} 
+                  onChange={() => setProviderType("individual")} 
+                  className="w-5 h-5 accent-blue-600" 
+                />
                 <span className="font-medium text-gray-800">Individual Artisan / Technician</span>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
-                <input type="radio" name="provider_type" value="business" checked={providerType === "business"} onChange={() => setProviderType("business")} className="w-5 h-5 accent-blue-600" />
+                <input 
+                  type="radio" 
+                  name="provider_type" 
+                  value="business" 
+                  checked={providerType === "business"} 
+                  onChange={() => setProviderType("business")} 
+                  className="w-5 h-5 accent-blue-600" 
+                />
                 <span className="font-medium text-gray-800">Business / Registered Company</span>
               </label>
             </div>
@@ -159,7 +172,7 @@ export default function ApplyPage() {
             </div>
           </div>
 
-          {/* 3. Services You Offer */}
+          {/* 3. Services You Offer - same as before */}
           <div>
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">3. Services You Offer <span className="text-red-500">*</span></h2>
             <p className="text-sm text-gray-600 mb-3">Select all services you specialize in</p>
@@ -213,7 +226,7 @@ export default function ApplyPage() {
             </div>
           </div>
 
-          {/* 4. Verification Documents */}
+          {/* 4. Verification Documents - Dynamic based on providerType */}
           <div>
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">4. Verification Documents</h2>
             
@@ -263,7 +276,7 @@ export default function ApplyPage() {
             </div>
           </div>
 
-          {/* 5. Terms & Conditions */}
+          {/* 5. Terms & Conditions - same */}
           <div className="bg-gray-50 border rounded-3xl p-8">
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">5. Terms &amp; Conditions <span className="text-red-500">*</span></h2>
             <div className="prose text-sm text-gray-700 space-y-4">
