@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from '@supabase/supabase-js';
+import { useRouter } from "next/navigation";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,16 +14,25 @@ export default function ApplyPage() {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
 
   const allServices = [
     "Electrician", "Plumber", "Gas Cooker Repair", "AC Technician", "Home Cleaning",
     "Barbing", "Hair & Salon", "Car Wash", "Private Chef", "Laundry/Dry Cleaning",
     "Massage Therapy", "Screeding & Painting", "Pest Control", "Sofa Cleaning",
     "DSTV Installation", "Solar Installation", "TV Wall Installation", "Kitchen Cabinet",
-    "Automechanics", "Tiler", "CCTV Camera Installation"
+    "Automechanics", "Tiler", "CCTV Camera Installation", "Generator Repair",
+    "Borehole Drilling", "Furniture Repair", "Interior Design", "Event Decoration",
+    "Photography", "Makeup Artist", "Tailoring", "Shoe Repair", "Appliance Repair",
+    "Refrigerator Repair", "Washing Machine Repair", "Microwave Repair", "Painting",
+    "Roofing", "Gardening", "Landscaping", "Fumigation", "Waste Disposal",
+    "Security Guard", "House Sitting", "Pet Sitting", "Tutoring", "Driving Lessons"
   ];
 
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
   const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
 
   const toggleService = (service: string) => {
@@ -36,6 +46,20 @@ export default function ApplyPage() {
   const removeService = (service: string) => {
     setSelectedServices(selectedServices.filter(s => s !== service));
   };
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push("/auth/login?redirect=/providers/apply");
+      } else {
+        setUser(session.user);
+      }
+      setLoading(false);
+    };
+
+    checkUser();
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -90,7 +114,8 @@ export default function ApplyPage() {
           nin: formData.get("nin"),
           residential_address: formData.get("residential_address"),
           documents: uploadedUrls,
-          status: "pending"
+          status: "pending",
+          user_id: user?.id
         }]);
 
       if (error) throw error;
@@ -98,7 +123,7 @@ export default function ApplyPage() {
       alert("✅ Application submitted successfully!");
       form.reset();
       setSelectedServices([]);
-      window.location.href = "/providers/thank-you";
+      router.push("/providers/thank-you");
 
     } catch (error: any) {
       console.error("Submission error:", error);
@@ -107,6 +132,8 @@ export default function ApplyPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (loading) return <div className="p-10 text-center">Checking authentication...</div>;
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-16">
@@ -125,25 +152,11 @@ export default function ApplyPage() {
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">1. Provider Type <span className="text-red-500">*</span></h2>
             <div className="flex gap-6">
               <label className="flex items-center gap-3 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="provider_type" 
-                  value="individual" 
-                  checked={providerType === "individual"} 
-                  onChange={() => setProviderType("individual")} 
-                  className="w-5 h-5 accent-blue-600" 
-                />
+                <input type="radio" name="provider_type" value="individual" checked={providerType === "individual"} onChange={() => setProviderType("individual")} className="w-5 h-5 accent-blue-600" />
                 <span className="font-medium text-gray-800">Individual Artisan / Technician</span>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="provider_type" 
-                  value="business" 
-                  checked={providerType === "business"} 
-                  onChange={() => setProviderType("business")} 
-                  className="w-5 h-5 accent-blue-600" 
-                />
+                <input type="radio" name="provider_type" value="business" checked={providerType === "business"} onChange={() => setProviderType("business")} className="w-5 h-5 accent-blue-600" />
                 <span className="font-medium text-gray-800">Business / Registered Company</span>
               </label>
             </div>
@@ -154,8 +167,16 @@ export default function ApplyPage() {
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">2. Personal / Business Information</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Full Name / Business Name <span className="text-red-500">*</span></label>
-                <input type="text" name="full_name" placeholder="Full Name / Business Name" required className="border border-gray-400 rounded-2xl px-6 py-4 w-full text-gray-900" />
+                <label className="block text-sm font-medium mb-2">
+                  {providerType === "individual" ? "Full Name" : "Business Name"} <span className="text-red-500">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  name="full_name" 
+                  placeholder={providerType === "individual" ? "Full Name" : "Business Name"} 
+                  required 
+                  className="border border-gray-400 rounded-2xl px-6 py-4 w-full text-gray-900" 
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Phone Number <span className="text-red-500">*</span></label>
@@ -226,7 +247,7 @@ export default function ApplyPage() {
             </div>
           </div>
 
-          {/* 4. Verification Documents - Dynamic based on providerType */}
+          {/* 4. Verification Documents */}
           <div>
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">4. Verification Documents</h2>
             
@@ -267,6 +288,10 @@ export default function ApplyPage() {
                   <label className="block font-medium mb-3 text-gray-800">Recent Utility Bill <span className="text-red-500">*</span></label>
                   <input type="file" name="documents" accept="image/*,.pdf" required className="w-full border border-gray-400 rounded-2xl px-6 py-4" />
                 </div>
+                <div>
+                  <label className="block font-medium mb-3 text-gray-800">Business Logo / Banner <span className="text-red-500">*</span></label>
+                  <input type="file" name="documents" accept="image/*" required className="w-full border border-gray-400 rounded-2xl px-6 py-4" />
+                </div>
               </div>
             )}
 
@@ -274,30 +299,6 @@ export default function ApplyPage() {
               <label className="block font-medium mb-2 text-gray-800">Residential / Business Address in Lagos Island <span className="text-red-500">*</span></label>
               <input type="text" name="residential_address" placeholder="Residential / Business Address in Lagos Island" required className="border border-gray-400 rounded-2xl px-6 py-4 w-full text-gray-900" />
             </div>
-          </div>
-
-          {/* 5. Terms & Conditions - same */}
-          <div className="bg-gray-50 border rounded-3xl p-8">
-            <h2 className="font-semibold text-2xl mb-6 text-gray-900">5. Terms &amp; Conditions <span className="text-red-500">*</span></h2>
-            <div className="prose text-sm text-gray-700 space-y-4">
-              <p>By submitting this application, you agree to the following terms and conditions:</p>
-              <ol className="list-decimal pl-5 space-y-3">
-                <li>We charge a <strong>20% commission</strong> on every job referred through our platform.</li>
-                <li>Payment by the client is either made directly to us or to you. If payment is made to us first, we deduct our 20% commission and remit your 80% the same day.</li>
-                <li>All receipts of payment received from clients must be sent to us immediately as proof of payment. <strong>Cash payments are not allowed</strong> without prior approval.</li>
-                <li>If payment is made directly to you, you must send us our 20% commission before the end of the same day.</li>
-                <li>You must contact the client within <strong>30 minutes</strong> of receiving their details. Failure to do so may result in the job being reassigned to another provider.</li>
-                <li>If for any reason you cannot fulfill an assigned job, you must notify both the client and us at least <strong>24 hours</strong> in advance (or a minimum of 6 hours in emergencies).</li>
-                <li>Failure to show up for an assigned task without proper notification may lead to immediate suspension or permanent removal from the platform.</li>
-                <li>Receiving multiple bad reviews from clients may result in suspension or complete removal from our platform.</li>
-                <li>You must maintain high professional standards, punctuality, and excellent customer service at all times.</li>
-                <li>Breach of any of these terms may lead to suspension or permanent removal from the platform.</li>
-              </ol>
-            </div>
-            <label className="flex items-start gap-3 mt-8 cursor-pointer">
-              <input type="checkbox" name="terms_agreed" required className="mt-1 w-5 h-5 accent-blue-600" />
-              <span className="text-sm text-gray-800">I have read and agree to the Terms &amp; Conditions above.</span>
-            </label>
           </div>
 
           <button 

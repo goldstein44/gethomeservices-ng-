@@ -3,8 +3,6 @@
 import { useState, useEffect } from "react";
 import { createClient } from '@supabase/supabase-js';
 
-export const dynamic = 'force-dynamic';
-
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -25,7 +23,6 @@ export default function AdminDashboard() {
     e.preventDefault();
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
-      setError("");
       fetchApplications();
     } else {
       setError("Invalid username or password");
@@ -40,7 +37,6 @@ export default function AdminDashboard() {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error(error);
       setError("Failed to load applications");
     } else {
       setApplications(data || []);
@@ -54,11 +50,13 @@ export default function AdminDashboard() {
       .update({ status: newStatus })
       .eq('id', id);
 
-    if (error) {
-      alert("Failed to update status");
-    } else {
-      fetchApplications();
-    }
+    if (!error) fetchApplications();
+  };
+
+  const deleteApplication = async (id: string) => {
+    if (!confirm("Delete this application permanently?")) return;
+    await supabase.from('provider_applications').delete().eq('id', id);
+    fetchApplications();
   };
 
   if (!isAuthenticated) {
@@ -106,7 +104,7 @@ export default function AdminDashboard() {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">Provider Applications</h1>
+        <h1 className="text-4xl font-bold">Admin Dashboard - Provider Applications</h1>
         <button
           onClick={() => setIsAuthenticated(false)}
           className="px-6 py-3 bg-gray-700 text-white rounded-2xl hover:bg-gray-800"
@@ -127,7 +125,7 @@ export default function AdminDashboard() {
                 <th className="border p-3 text-left">Date</th>
                 <th className="border p-3 text-left">Full Name</th>
                 <th className="border p-3 text-left">Phone</th>
-                <th className="border p-3 text-left">Provider Type</th>
+                <th className="border p-3 text-left">Type</th>
                 <th className="border p-3 text-left">Services</th>
                 <th className="border p-3 text-left">Status</th>
                 <th className="border p-3 text-left">Actions</th>
@@ -150,16 +148,22 @@ export default function AdminDashboard() {
                       {app.status}
                     </span>
                   </td>
-                  <td className="border p-3">
+                  <td className="border p-3 flex gap-2">
                     <select 
                       value={app.status}
                       onChange={(e) => updateStatus(app.id, e.target.value)}
                       className="border rounded-lg px-3 py-1 text-sm"
                     >
                       <option value="pending">Pending</option>
-                      <option value="approved">Approved</option>
-                      <option value="rejected">Rejected</option>
+                      <option value="approved">Approve</option>
+                      <option value="rejected">Reject</option>
                     </select>
+                    <button 
+                      onClick={() => deleteApplication(app.id)} 
+                      className="text-red-600 hover:text-red-800 text-sm"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}

@@ -1,70 +1,95 @@
-import { notFound } from "next/navigation";
-import ProviderCard from "@/components/ProviderCard";
-import categoriesData from "@/data/categories.json";
-import providersData from "@/data/providers.json";
+"use client";
 
-interface Props {
-  params: Promise<{ slug: string }>;
-}
+import { useState, useEffect } from "react";
+import { createClient } from '@supabase/supabase-js';
+import { useRouter } from "next/navigation";
 
-export async function generateStaticParams() {
-  return categoriesData.map((category) => ({
-    slug: category.slug,
-  }));
-}
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
-export async function generateMetadata({ params }: Props) {
-  const { slug } = await params;
-  const category = categoriesData.find(c => c.slug === slug);
+export default function ServicePage({ params }: { params: { slug: string } }) {
+  const [providers, setProviders] = useState<any[]>([]);
+  const [clickCount, setClickCount] = useState(0);
+  const [isPremium, setIsPremium] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-  if (!category) return { title: "Service Not Found" };
+  useEffect(() => {
+    const loadData = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const user = session?.user;
 
-  return {
-    title: `${category.name} Services in Lagos Island - GetHomeServices NG`,
-    description: `Find trusted ${category.name.toLowerCase()} professionals across Lagos Island. Book via WhatsApp.`,
+      // Fetch approved providers
+      const { data: approved } = await supabase
+        .from('provider_applications')
+        .select('*')
+        .eq('status', 'approved');
+
+      setProviders(approved || []);
+
+      if (user) {
+        // Count clicks this month
+        const { count } = await supabase
+          .from('whatsapp_clicks')
+          .select('*', { count: 'exact' })
+          .eq('user_id', user.id)
+          .gte('clicked_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString());
+
+        setClickCount(count || 0);
+      }
+      setLoading(false);
+    };
+
+    loadData();
+  }, []);
+
+  const handleWhatsAppClick = async (provider: any) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      router.push("/auth/login");
+      return;
+    }
+
+    if (clickCount >= 5 && !isPremium) {
+      alert("You have reached your monthly limit of 5 WhatsApp contacts. Upgrade to Premium for unlimited access.");
+      return;
+    }
+
+    // Record click
+    await supabase.from('whatsapp_clicks').insert({
+      user_id: session.user.id,
+      provider_id: provider.id
+    });
+
+    setClickCount(prev => prev + 1);
+
+    window.open(`https://wa.me/${provider.whatsapp}`, '_blank');
   };
-}
 
-export default async function ServicePage({ params }: Props) {
-  const { slug } = await params;
-  const category = categoriesData.find(c => c.slug === slug);
-
-  if (!category) notFound();
-
-  const filteredProviders = providersData.filter(provider =>
-    provider.services.some(service =>
-      service.toLowerCase().includes(category.name.toLowerCase().split(" ")[0])
-    )
-  );
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
-      <div className="mb-12">
-        <h1 className="text-5xl font-bold tracking-tight">{category.name} Services</h1>
-        <p className="text-xl text-gray-600 mt-4">
-          Verified professionals across Lagos Island
-        </p>
-      </div>
+      <h1 className="text-5xl font-bold">Available Providers</h1>
+      <p className="text-gray-600 mt-2">Click to chat on WhatsApp</p>
 
-      {filteredProviders.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProviders.map((provider) => (
-            <ProviderCard key={provider.id} provider={provider} />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-20 bg-gray-50 rounded-3xl">
-          <p className="text-2xl text-gray-600">No providers available yet for this service.</p>
-          <p className="mt-4 text-gray-500">We are actively adding more professionals.</p>
-          
-          <a 
-            href={`https://wa.me/2348125146666?text=Hi%2C%20I%20need%20a%20${encodeURIComponent(category.name)}`}
-            className="mt-8 inline-block bg-emerald-600 text-white px-10 py-4 rounded-3xl font-semibold"
-          >
-            Request This Service via WhatsApp
-          </a>
-        </div>
-      )}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+        {providers.map((provider) => (
+          <div key={provider.id} className="border rounded-3xl p-6">
+            <h3 className="font-bold text-xl">{provider.full_name}</h3>
+            <p className="text-sm text-gray-600 mt-2">{provider.services_offered}</p>
+
+            <button 
+              onClick={() => handleWhatsAppClick(provider)}
+              className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-2xl font-semibold"
+            >
+              Chat on WhatsApp
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

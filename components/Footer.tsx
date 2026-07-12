@@ -22,9 +22,8 @@ export default function Footer() {
             <h4 className="font-semibold text-white mb-5">Quick Links</h4>
             <ul className="space-y-3 text-sm">
               <li><Link href="/" className="hover:text-white transition">Home</Link></li>
-              <li><Link href="/services/electrician" className="hover:text-white transition">Browse Services</Link></li>
+              <li><Link href="/services" className="hover:text-white transition">Browse Services</Link></li>
               <li><Link href="/providers/apply" className="hover:text-white transition">List Your Service</Link></li>
-              <li><Link href="/review" className="hover:text-white transition">Submit a Review</Link></li>
             </ul>
           </div>
 
@@ -51,6 +50,7 @@ export default function Footer() {
             >
               💬 WhatsApp: 0812 514 6666
             </a>
+            <p className="mt-3 text-sm">support@gethomeservices.com.ng</p>
 
             <div className="mt-10 text-xs space-y-2">
               <p>© 2026 GetHomeServices NG. A product of Kaffa Technologies Ltd.</p>

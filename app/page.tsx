@@ -3,16 +3,13 @@
 import Link from "next/link";
 import CategoryCard from "@/components/CategoryCard";
 import ProviderCard from "@/components/ProviderCard";
-import ReviewCard from "@/components/ReviewCard";
 
 import categoriesData from "@/data/categories.json";
 import providersData from "@/data/providers.json";
-import reviewsData from "@/data/reviews.json";
 import locationsData from "@/data/locations.json";
 
 export default function Home() {
   const featuredProviders = providersData.slice(0, 6);
-  const recentReviews = reviewsData.slice(0, 6);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,7 +40,7 @@ export default function Home() {
           
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
-              href="/services/electrician"
+              href="/services"
               className="bg-white text-blue-700 font-semibold px-10 py-4 rounded-3xl text-lg hover:bg-gray-100 transition"
             >
               Browse Services
@@ -58,7 +55,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SEARCH BAR - Improved Visibility */}
+      {/* SEARCH BAR */}
       <div className="max-w-4xl mx-auto -mt-8 relative z-10 px-6">
         <form onSubmit={handleSearch} className="bg-white rounded-3xl shadow-xl p-8">
           <div className="grid md:grid-cols-2 gap-6">
@@ -98,14 +95,14 @@ export default function Home() {
         </form>
       </div>
 
-      {/* POPULAR SERVICES - Limited */}
+      {/* POPULAR SERVICES */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="flex justify-between items-end mb-10">
           <div>
             <h2 className="text-4xl font-bold tracking-tight">Popular Services</h2>
-            <p className="text-gray-600 mt-2">Choose from 21 professional services</p>
+            <p className="text-gray-600 mt-2">Choose from professional services</p>
           </div>
-          <Link href="/services/electrician" className="text-blue-600 font-medium flex items-center gap-2 hover:underline">
+          <Link href="/services" className="text-blue-600 font-medium flex items-center gap-2 hover:underline">
             View all services →
           </Link>
         </div>
@@ -158,28 +155,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* REVIEWS */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <h2 className="text-4xl font-bold tracking-tight text-center mb-12">What Our Clients Say</h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          {recentReviews.map((review, i) => (
-            <ReviewCard key={i} review={review} />
-          ))}
-        </div>
-      </section>
-
       {/* FINAL CTA */}
       <div className="bg-emerald-600 text-white py-20 text-center">
         <div className="max-w-2xl mx-auto px-6">
           <h2 className="text-4xl font-bold">Ready to get your home service sorted?</h2>
           <p className="mt-6 text-xl opacity-90">Message verified providers directly on WhatsApp.</p>
-          <a 
-            href="https://wa.me/2348125146666?text=Hi%2C%20I%20need%20a%20home%20service%20in%20Lagos%20Island"
-            target="_blank"
+          <Link 
+            href="/services"
             className="mt-10 inline-flex items-center gap-3 bg-white text-emerald-700 font-semibold px-12 py-5 rounded-3xl text-xl hover:bg-gray-100 transition"
           >
-            💬 Message a Provider Now
-          </a>
+            View All Services
+          </Link>
         </div>
       </div>
     </>

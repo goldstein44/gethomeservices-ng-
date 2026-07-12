@@ -1,23 +1,248 @@
 [
-  {"id":1,"name":"Electrician","slug":"electrician"},
-  {"id":2,"name":"Plumber","slug":"plumber"},
-  {"id":3,"name":"Gas Cooker Repair","slug":"gas-cooker-repair"},
-  {"id":4,"name":"AC Technician","slug":"ac-technician"},
-  {"id":5,"name":"Home Cleaning","slug":"home-cleaning"},
-  {"id":6,"name":"Barbing","slug":"barbing"},
-  {"id":7,"name":"Hair & Salon","slug":"hair-salon"},
-  {"id":8,"name":"Car Wash","slug":"car-wash"},
-  {"id":9,"name":"Private Chef","slug":"private-chef"},
-  {"id":10,"name":"Laundry/Dry Cleaning","slug":"laundry-dry-cleaning"},
-  {"id":11,"name":"Massage Therapy","slug":"massage-therapy"},
-  {"id":12,"name":"Screeding & Painting","slug":"screeding-painting"},
-  {"id":13,"name":"Pest Control","slug":"pest-control"},
-  {"id":14,"name":"Sofa Cleaning","slug":"sofa-cleaning"},
-  {"id":15,"name":"DSTV Installation","slug":"dstv-installation"},
-  {"id":16,"name":"Solar Installation","slug":"solar-installation"},
-  {"id":17,"name":"TV Wall Installation","slug":"tv-wall-installation"},
-  {"id":18,"name":"Kitchen Cabinet","slug":"kitchen-cabinet"},
-  {"id":19,"name":"Automechanics","slug":"automechanics"},
-  {"id":20,"name":"Tiler","slug":"tiler"},
-  {"id":21,"name":"CCTV Camera Installation","slug":"cctv-camera-installation"}
+  {
+    "id": 1,
+    "name": "Electrician",
+    "slug": "electrician",
+    "icon": "⚡"
+  },
+  {
+    "id": 2,
+    "name": "Plumber",
+    "slug": "plumber",
+    "icon": "🔧"
+  },
+  {
+    "id": 3,
+    "name": "Gas Cooker Repair",
+    "slug": "gas-cooker-repair",
+    "icon": "🍳"
+  },
+  {
+    "id": 4,
+    "name": "AC Technician",
+    "slug": "ac-technician",
+    "icon": "❄️"
+  },
+  {
+    "id": 5,
+    "name": "Home Cleaning",
+    "slug": "home-cleaning",
+    "icon": "🧹"
+  },
+  {
+    "id": 6,
+    "name": "Barbing",
+    "slug": "barbing",
+    "icon": "✂️"
+  },
+  {
+    "id": 7,
+    "name": "Hair & Salon",
+    "slug": "hair-salon",
+    "icon": "💇‍♀️"
+  },
+  {
+    "id": 8,
+    "name": "Car Wash",
+    "slug": "car-wash",
+    "icon": "🚘"
+  },
+  {
+    "id": 9,
+    "name": "Private Chef",
+    "slug": "private-chef",
+    "icon": "👨‍🍳"
+  },
+  {
+    "id": 10,
+    "name": "Laundry/Dry Cleaning",
+    "slug": "laundry-dry-cleaning",
+    "icon": "👕"
+  },
+  {
+    "id": 11,
+    "name": "Massage Therapy",
+    "slug": "massage-therapy",
+    "icon": "💆"
+  },
+  {
+    "id": 12,
+    "name": "Screeding & Painting",
+    "slug": "screeding-painting",
+    "icon": "🎨"
+  },
+  {
+    "id": 13,
+    "name": "Pest Control",
+    "slug": "pest-control",
+    "icon": "🪳"
+  },
+  {
+    "id": 14,
+    "name": "Sofa Cleaning",
+    "slug": "sofa-cleaning",
+    "icon": "🛋️"
+  },
+  {
+    "id": 15,
+    "name": "DSTV Installation",
+    "slug": "dstv-installation",
+    "icon": "📺"
+  },
+  {
+    "id": 16,
+    "name": "Solar Installation",
+    "slug": "solar-installation",
+    "icon": "☀️"
+  },
+  {
+    "id": 17,
+    "name": "TV Wall Installation",
+    "slug": "tv-wall-installation",
+    "icon": "🖥️"
+  },
+  {
+    "id": 18,
+    "name": "Kitchen Cabinet",
+    "slug": "kitchen-cabinet",
+    "icon": "🏠"
+  },
+  {
+    "id": 19,
+    "name": "Automechanics",
+    "slug": "automechanics",
+    "icon": "🔧"
+  },
+  {
+    "id": 20,
+    "name": "Tiler",
+    "slug": "tiler",
+    "icon": "🧱"
+  },
+  {
+    "id": 21,
+    "name": "CCTV Camera Installation",
+    "slug": "cctv-camera-installation",
+    "icon": "📹"
+  },
+  {
+    "id": 22,
+    "name": "Generator Repair",
+    "slug": "generator-repair",
+    "icon": "⚙️"
+  },
+  {
+    "id": 23,
+    "name": "Borehole Drilling",
+    "slug": "borehole-drilling",
+    "icon": "💧"
+  },
+  {
+    "id": 24,
+    "name": "Furniture Repair",
+    "slug": "furniture-repair",
+    "icon": "🪑"
+  },
+  {
+    "id": 25,
+    "name": "Interior Design",
+    "slug": "interior-design",
+    "icon": "🛋️"
+  },
+  {
+    "id": 26,
+    "name": "Event Decoration",
+    "slug": "event-decoration",
+    "icon": "🎉"
+  },
+  {
+    "id": 27,
+    "name": "Photography",
+    "slug": "photography",
+    "icon": "📸"
+  },
+  {
+    "id": 28,
+    "name": "Makeup Artist",
+    "slug": "makeup-artist",
+    "icon": "💄"
+  },
+  {
+    "id": 29,
+    "name": "Tailoring",
+    "slug": "tailoring",
+    "icon": "🧵"
+  },
+  {
+    "id": 30,
+    "name": "Shoe Repair",
+    "slug": "shoe-repair",
+    "icon": "👟"
+  },
+  {
+    "id": 31,
+    "name": "Appliance Repair",
+    "slug": "appliance-repair",
+    "icon": "🔌"
+  },
+  {
+    "id": 32,
+    "name": "Refrigerator Repair",
+    "slug": "refrigerator-repair",
+    "icon": "❄️"
+  },
+  {
+    "id": 33,
+    "name": "Washing Machine Repair",
+    "slug": "washing-machine-repair",
+    "icon": "🧺"
+  },
+  {
+    "id": 34,
+    "name": "Microwave Repair",
+    "slug": "microwave-repair",
+    "icon": "🍲"
+  },
+  {
+    "id": 35,
+    "name": "Painting",
+    "slug": "painting",
+    "icon": "🎨"
+  },
+  {
+    "id": 36,
+    "name": "Roofing",
+    "slug": "roofing",
+    "icon": "🏠"
+  },
+  {
+    "id": 37,
+    "name": "Gardening",
+    "slug": "gardening",
+    "icon": "🌱"
+  },
+  {
+    "id": 38,
+    "name": "Landscaping",
+    "slug": "landscaping",
+    "icon": "🌳"
+  },
+  {
+    "id": 39,
+    "name": "Fumigation",
+    "slug": "fumigation",
+    "icon": "🪳"
+  },
+  {
+    "id": 40,
+    "name": "Waste Disposal",
+    "slug": "waste-disposal",
+    "icon": "🗑️"
+  },
+  {
+    "id": 41,
+    "name": "Security Guard",
+    "slug": "security-guard",
+    "icon": "🛡️"
+  }
 ]
