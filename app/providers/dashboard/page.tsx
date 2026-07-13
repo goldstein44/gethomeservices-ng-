@@ -11,6 +11,7 @@ const supabase = createClient(
 
 export default function ProviderDashboard() {
   const [user, setUser] = useState<any>(null);
+  const [fullName, setFullName] = useState("");
   const [applications, setApplications] = useState<any[]>([]);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,6 +26,7 @@ export default function ProviderDashboard() {
       }
 
       setUser(session.user);
+      setFullName(session.user.user_metadata?.full_name || session.user.email.split('@')[0]);
 
       // Fetch applications
       const { data } = await supabase
@@ -76,7 +78,7 @@ export default function ProviderDashboard() {
       <div className="flex justify-between items-center mb-10">
         <div>
           <h1 className="text-4xl font-bold">Provider Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome, {user?.email}</p>
+          <p className="text-gray-600 mt-1">Welcome, {fullName}</p>
         </div>
         <button
           onClick={handleLogout}
@@ -109,6 +111,10 @@ export default function ProviderDashboard() {
             <p><strong>Email:</strong> {user?.email}</p>
             <p><strong>Status:</strong> <span className="text-green-600 font-medium">Active Provider</span></p>
           </div>
+
+          <button className="mt-8 w-full bg-gray-900 text-white py-4 rounded-2xl hover:bg-black transition">
+            Edit Profile & Settings
+          </button>
         </div>
 
         {/* Applications */}
