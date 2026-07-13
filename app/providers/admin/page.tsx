@@ -1,23 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createClient } from '@supabase/supabase-js';
+import { Eye, EyeOff } from "lucide-react";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-const ADMIN_USERNAME = "goldstein4";
-const ADMIN_PASSWORD = "epignosko";
-
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const ADMIN_USERNAME = "goldstein4";
+  const ADMIN_PASSWORD = "epignosko";
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,19 +74,28 @@ export default function AdminDashboard() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full border border-gray-400 rounded-2xl px-6 py-4"
+                className="w-full border border-gray-400 rounded-2xl px-6 py-4 text-base"
                 required
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-gray-400 rounded-2xl px-6 py-4"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full border border-gray-400 rounded-2xl px-6 py-4 pr-12 text-base"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-4 text-gray-500"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
 
             {error && <p className="text-red-500 text-center">{error}</p>}

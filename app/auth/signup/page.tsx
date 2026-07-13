@@ -87,12 +87,24 @@ export default function SignupPage() {
 
           <div>
             <label className="block text-sm font-medium mb-2">Full Name</label>
-            <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required className="w-full border border-gray-400 rounded-2xl px-6 py-4" />
+            <input 
+              type="text" 
+              value={fullName} 
+              onChange={(e) => setFullName(e.target.value)} 
+              required 
+              className="w-full border border-gray-400 rounded-2xl px-6 py-4 text-base" 
+            />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full border border-gray-400 rounded-2xl px-6 py-4" />
+            <input 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              required 
+              className="w-full border border-gray-400 rounded-2xl px-6 py-4 text-base" 
+            />
           </div>
 
           <div>
@@ -103,7 +115,7 @@ export default function SignupPage() {
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
                 required 
-                className="w-full border border-gray-400 rounded-2xl px-6 py-4 pr-12" 
+                className="w-full border border-gray-400 rounded-2xl px-6 py-4 pr-12 text-base" 
               />
               <button
                 type="button"
@@ -115,9 +127,18 @@ export default function SignupPage() {
             </div>
           </div>
 
+          <label className="flex items-start gap-3 mt-6 cursor-pointer text-sm">
+            <input type="checkbox" required className="mt-1" />
+            <span>By signing up, you agree to our <a href="/terms-of-service" className="text-blue-600 hover:underline">Terms & Conditions</a></span>
+          </label>
+
           {error && <p className="text-red-500 text-center">{error}</p>}
 
-          <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-6 rounded-3xl text-xl font-semibold">
+          <button 
+            type="submit" 
+            disabled={loading} 
+            className="w-full bg-blue-600 text-white py-6 rounded-3xl text-xl font-semibold hover:bg-blue-700 disabled:bg-gray-400"
+          >
             {loading ? "Creating..." : "Create Account"}
           </button>
         </form>

@@ -48,7 +48,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-400 rounded-2xl px-6 py-4"
+              className="w-full border border-gray-400 rounded-2xl px-6 py-4 text-base"
               required
             />
           </div>
@@ -60,7 +60,7 @@ export default function LoginPage() {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-gray-400 rounded-2xl px-6 py-4 pr-12"
+                className="w-full border border-gray-400 rounded-2xl px-6 py-4 pr-12 text-base"
                 required
               />
               <button
