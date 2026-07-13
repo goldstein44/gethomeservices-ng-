@@ -11,10 +11,16 @@ const supabase = createClient(
 
 export default function ProviderDashboard() {
   const [user, setUser] = useState<any>(null);
-  const [fullName, setFullName] = useState("");
+  const [profile, setProfile] = useState({
+    full_name: "",
+    phone: "",
+    whatsapp: "",
+    residential_address: ""
+  });
   const [applications, setApplications] = useState<any[]>([]);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -26,21 +32,52 @@ export default function ProviderDashboard() {
       }
 
       setUser(session.user);
-      setFullName(session.user.user_metadata?.full_name || session.user.email.split('@')[0]);
 
-      // Fetch applications
-      const { data } = await supabase
+      // Fetch profile data
+      const { data: appData } = await supabase
         .from('provider_applications')
         .select('*')
         .eq('user_id', session.user.id)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(1);
 
-      setApplications(data || []);
+      if (appData && appData.length > 0) {
+        setProfile({
+          full_name: appData[0].full_name || "",
+          phone: appData[0].phone || "",
+          whatsapp: appData[0].whatsapp || "",
+          residential_address: appData[0].residential_address || ""
+        });
+      }
+
+      setApplications(appData || []);
       setLoading(false);
     };
 
     checkAuth();
   }, [router]);
+
+  const handleProfileUpdate = async () => {
+    if (!user) return;
+    setSaving(true);
+
+    const { error } = await supabase
+      .from('provider_applications')
+      .update({
+        full_name: profile.full_name,
+        phone: profile.phone,
+        whatsapp: profile.whatsapp,
+        residential_address: profile.residential_address
+      })
+      .eq('user_id', user.id);
+
+    if (error) {
+      alert("Failed to update profile");
+    } else {
+      alert("Profile updated successfully!");
+    }
+    setSaving(false);
+  };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -63,7 +100,7 @@ export default function ProviderDashboard() {
       .getPublicUrl(fileName);
 
     setProfilePhoto(publicUrl);
-    alert("Profile photo updated successfully!");
+    alert("Profile photo updated!");
   };
 
   const handleLogout = async () => {
@@ -78,7 +115,7 @@ export default function ProviderDashboard() {
       <div className="flex justify-between items-center mb-10">
         <div>
           <h1 className="text-4xl font-bold">Provider Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome, {fullName}</p>
+          <p className="text-gray-600 mt-1">Welcome, {profile.full_name || user?.email}</p>
         </div>
         <button
           onClick={handleLogout}
@@ -89,9 +126,9 @@ export default function ProviderDashboard() {
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
-        {/* Profile Sidebar */}
-        <div className="md:col-span-4 bg-white border rounded-3xl p-8 h-fit">
-          <h2 className="font-semibold text-2xl mb-6">My Profile</h2>
+        {/* Profile Settings */}
+        <div className="md:col-span-5 bg-white border rounded-3xl p-8">
+          <h2 className="font-semibold text-2xl mb-6">Profile Settings</h2>
 
           <div className="flex flex-col items-center mb-8">
             <div className="w-32 h-32 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-md">
@@ -107,18 +144,56 @@ export default function ProviderDashboard() {
             </label>
           </div>
 
-          <div className="space-y-4 text-sm">
-            <p><strong>Email:</strong> {user?.email}</p>
-            <p><strong>Status:</strong> <span className="text-green-600 font-medium">Active Provider</span></p>
-          </div>
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium mb-2">Full Name / Business Name</label>
+              <input 
+                type="text" 
+                value={profile.full_name} 
+                onChange={(e) => setProfile({...profile, full_name: e.target.value})} 
+                className="w-full border border-gray-400 rounded-2xl px-6 py-4" 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Phone Number</label>
+              <input 
+                type="tel" 
+                value={profile.phone} 
+                onChange={(e) => setProfile({...profile, phone: e.target.value})} 
+                className="w-full border border-gray-400 rounded-2xl px-6 py-4" 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">WhatsApp Number</label>
+              <input 
+                type="tel" 
+                value={profile.whatsapp} 
+                onChange={(e) => setProfile({...profile, whatsapp: e.target.value})} 
+                className="w-full border border-gray-400 rounded-2xl px-6 py-4" 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Address</label>
+              <input 
+                type="text" 
+                value={profile.residential_address} 
+                onChange={(e) => setProfile({...profile, residential_address: e.target.value})} 
+                className="w-full border border-gray-400 rounded-2xl px-6 py-4" 
+              />
+            </div>
 
-          <button className="mt-8 w-full bg-gray-900 text-white py-4 rounded-2xl hover:bg-black transition">
-            Edit Profile & Settings
-          </button>
+            <button 
+              onClick={handleProfileUpdate} 
+              disabled={saving}
+              className="w-full bg-blue-600 text-white py-4 rounded-2xl hover:bg-blue-700 disabled:bg-gray-400"
+            >
+              {saving ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
         </div>
 
         {/* Applications */}
-        <div className="md:col-span-8 bg-white border rounded-3xl p-8">
+        <div className="md:col-span-7 bg-white border rounded-3xl p-8">
           <h2 className="font-semibold text-2xl mb-6">My Applications</h2>
 
           {applications.length === 0 ? (
