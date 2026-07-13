@@ -73,14 +73,14 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden mt-6 pt-6 border-t">
+          <div className="md:hidden mt-6 pt-6 border-t bg-white">
             <div className="flex flex-col gap-6 text-lg">
-              <Link href="/services" className="hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>Services</Link>
-              <Link href="/providers/apply" className="hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>List Your Service</Link>
+              <Link href="/services" className="text-blue-600 hover:text-blue-700" onClick={() => setIsMenuOpen(false)}>Services</Link>
+              <Link href="/providers/apply" className="text-blue-600 hover:text-blue-700" onClick={() => setIsMenuOpen(false)}>List Your Service</Link>
 
               {user ? (
                 <>
-                  <Link href="/providers/dashboard" className="hover:text-blue-600" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+                  <Link href="/providers/dashboard" className="text-blue-600 hover:text-blue-700" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
                   <button onClick={handleLogout} className="text-red-600 text-left">Logout</button>
                 </>
               ) : (
