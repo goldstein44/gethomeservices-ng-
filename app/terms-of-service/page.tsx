@@ -2,7 +2,7 @@ export default function TermsOfService() {
   return (
     <div className="max-w-3xl mx-auto px-6 py-20 prose prose-gray">
       <h1 className="text-4xl font-bold mb-10">Terms of Service</h1>
-      <p className="text-sm text-gray-500 mb-10">Last updated: April 2026</p>
+      <p className="text-sm text-gray-500 mb-10">Last updated: July 2026</p>
 
       <p>Welcome to GetHomeServices NG. By using our platform, you agree to these Terms of Service.</p>
 
@@ -19,8 +19,8 @@ export default function TermsOfService() {
       <h2 className="text-2xl font-semibold mt-12 mb-4">3. For Service Providers</h2>
       <ul className="list-disc pl-6 space-y-3">
         <li>You are an independent contractor. GetHomeServices NG does not employ you.</li>
-        <li>We charge a 20% commission on every referred job.</li>
         <li>You must maintain high professional standards and respond to leads promptly.</li>
+        <li>You are responsible for your own pricing, service delivery, and customer satisfaction.</li>
       </ul>
 
       <h2 className="text-2xl font-semibold mt-12 mb-4">4. Liability &amp; Dispute Resolution</h2>
@@ -39,8 +39,8 @@ export default function TermsOfService() {
 
       <p>You are encouraged to verify the provider, take photos before/after service, and use secure payment methods.</p>
 
-      <h2 className="text-2xl font-semibold mt-12 mb-4">5. Commission &amp; Payments</h2>
-      <p>Our 20% commission applies to all jobs originated through our platform. Providers agree to remit this commission whether payment is made through us or directly to them.</p>
+      <h2 className="text-2xl font-semibold mt-12 mb-4">5. No Commission</h2>
+      <p>GetHomeServices NG does not charge any commission on jobs. All payments are made directly between the customer and the service provider.</p>
 
       <p className="mt-12 text-sm text-gray-500">
         For questions regarding these terms, please contact us via WhatsApp at 0812 514 6666.
