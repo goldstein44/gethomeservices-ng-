@@ -35,19 +35,19 @@ export default function Navbar() {
     <nav className="bg-white border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-5">
         <div className="flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold text-blue-600">GetHomeServices</Link>
+          <Link href="/" className="text-2xl font-bold text-blue-600 select-none">GetHomeServices</Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/services" className="hover:text-blue-600">Services</Link>
-            <Link href="/providers/apply" className="hover:text-blue-600">List Your Service</Link>
+          <div className="hidden md:flex items-center gap-8 text-base">
+            <Link href="/services" className="hover:text-blue-600 transition">Services</Link>
+            <Link href="/providers/apply" className="hover:text-blue-600 transition">List Your Service</Link>
 
             {user ? (
               <>
-                <Link href="/providers/dashboard" className="hover:text-blue-600">Dashboard</Link>
+                <Link href="/providers/dashboard" className="hover:text-blue-600 transition">Dashboard</Link>
                 <button 
                   onClick={handleLogout}
-                  className="text-red-600 hover:text-red-700"
+                  className="text-red-600 hover:text-red-700 transition"
                 >
                   Logout
                 </button>
@@ -55,7 +55,7 @@ export default function Navbar() {
             ) : (
               <Link 
                 href="/auth/login" 
-                className="bg-blue-600 text-white px-8 py-3 rounded-2xl hover:bg-blue-700"
+                className="bg-blue-600 text-white px-8 py-3 rounded-2xl hover:bg-blue-700 transition"
               >
                 Login / Register
               </Link>
@@ -64,7 +64,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button 
-            className="md:hidden"
+            className="md:hidden p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
