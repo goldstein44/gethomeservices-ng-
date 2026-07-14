@@ -12,6 +12,7 @@ const supabase = createClient(
 export default function ProviderDashboard() {
   const [user, setUser] = useState<any>(null);
   const [fullName, setFullName] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -27,6 +28,11 @@ export default function ProviderDashboard() {
       setUser(session.user);
       setFullName(session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || "Provider");
 
+      // Load profile photo from metadata
+      const photoUrl = session.user.user_metadata?.profile_photo;
+      if (photoUrl) setProfilePhoto(photoUrl);
+
+      // Fetch applications
       const { data } = await supabase
         .from('provider_applications')
         .select('*')
@@ -39,6 +45,35 @@ export default function ProviderDashboard() {
 
     checkAuth();
   }, [router]);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `profile-photos/${user.id}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('provider-documents')
+      .upload(fileName, file, { upsert: true });
+
+    if (uploadError) {
+      alert("Photo upload failed");
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('provider-documents')
+      .getPublicUrl(fileName);
+
+    // Update user metadata
+    await supabase.auth.updateUser({
+      data: { profile_photo: publicUrl }
+    });
+
+    setProfilePhoto(publicUrl);
+    alert("Profile photo updated successfully!");
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -63,23 +98,35 @@ export default function ProviderDashboard() {
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
-        {/* Quick Actions */}
+        {/* Profile Sidebar */}
         <div className="md:col-span-4 bg-white border rounded-3xl p-8 h-fit">
-          <h2 className="font-semibold text-2xl mb-6">Quick Actions</h2>
-          <div className="space-y-4">
-            <button 
-              onClick={() => router.push("/providers/settings")}
-              className="w-full bg-gray-900 text-white py-4 rounded-2xl hover:bg-black transition"
-            >
-              Profile Settings
-            </button>
-            <button 
-              onClick={() => router.push("/providers/premium")}
-              className="w-full bg-emerald-600 text-white py-4 rounded-2xl hover:bg-emerald-700 transition"
-            >
-              Upgrade to Premium
-            </button>
+          <h2 className="font-semibold text-2xl mb-6">My Profile</h2>
+
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-32 h-32 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-md">
+              {profilePhoto ? (
+                <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-5xl">👤</div>
+              )}
+            </div>
+            <label className="mt-4 cursor-pointer text-blue-600 hover:text-blue-700 text-sm">
+              Change Photo
+              <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+            </label>
           </div>
+
+          <div className="space-y-4 text-sm">
+            <p><strong>Email:</strong> {user?.email}</p>
+            <p><strong>Status:</strong> <span className="text-green-600 font-medium">Active Provider</span></p>
+          </div>
+
+          <button 
+            onClick={() => router.push("/providers/settings")}
+            className="mt-8 w-full bg-gray-900 text-white py-4 rounded-2xl hover:bg-black transition"
+          >
+            Edit Profile & Settings
+          </button>
         </div>
 
         {/* Applications */}
