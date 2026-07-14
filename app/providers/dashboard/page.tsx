@@ -11,6 +11,7 @@ const supabase = createClient(
 
 export default function ProviderDashboard() {
   const [user, setUser] = useState<any>(null);
+  const [fullName, setFullName] = useState("");
   const [profile, setProfile] = useState({
     full_name: "",
     phone: "",
@@ -33,6 +34,12 @@ export default function ProviderDashboard() {
 
       setUser(session.user);
 
+      const displayName = session.user.user_metadata?.full_name || 
+                         session.user.email?.split('@')[0] || 
+                         "Provider";
+
+      setFullName(displayName);
+
       // Fetch profile data
       const { data: appData } = await supabase
         .from('provider_applications')
@@ -43,7 +50,7 @@ export default function ProviderDashboard() {
 
       if (appData && appData.length > 0) {
         setProfile({
-          full_name: appData[0].full_name || "",
+          full_name: appData[0].full_name || displayName,
           phone: appData[0].phone || "",
           whatsapp: appData[0].whatsapp || "",
           residential_address: appData[0].residential_address || ""
@@ -115,7 +122,7 @@ export default function ProviderDashboard() {
       <div className="flex justify-between items-center mb-10">
         <div>
           <h1 className="text-4xl font-bold">Provider Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome, {profile.full_name || user?.email}</p>
+          <p className="text-gray-600 mt-1">Welcome, {fullName}</p>
         </div>
         <button
           onClick={handleLogout}
@@ -127,7 +134,7 @@ export default function ProviderDashboard() {
 
       <div className="grid md:grid-cols-12 gap-8">
         {/* Profile Settings */}
-        <div className="md:col-span-5 bg-white border rounded-3xl p-8">
+        <div className="md:col-span-5 bg-white border rounded-3xl p-8 h-fit">
           <h2 className="font-semibold text-2xl mb-6">Profile Settings</h2>
 
           <div className="flex flex-col items-center mb-8">
