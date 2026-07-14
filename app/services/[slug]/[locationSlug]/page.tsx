@@ -1,91 +1,95 @@
-import { notFound } from "next/navigation";
-import ProviderCard from "@/components/ProviderCard";
-import categoriesData from "@/data/categories.json";
-import providersData from "@/data/providers.json";
-import locationsData from "@/data/locations.json";
+"use client";
 
-interface Props {
-  params: Promise<{ slug: string; locationSlug: string }>;
-}
+import { useState, useEffect } from "react";
+import { createClient } from '@supabase/supabase-js';
+import { useRouter } from "next/navigation";
 
-export async function generateStaticParams() {
-  const params = [];
-  for (const category of categoriesData) {
-    for (const location of locationsData) {
-      params.push({ 
-        slug: category.slug, 
-        locationSlug: location.slug 
-      });
-    }
-  }
-  return params;
-}
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
-export async function generateMetadata({ params }: Props) {
-  const { slug, locationSlug } = await params;
-  const category = categoriesData.find(c => c.slug === slug);
-  const location = locationsData.find(l => l.slug === locationSlug);
+export default function ServiceLocationPage({ params }: { params: { slug: string; locationSlug: string } }) {
+  const [providers, setProviders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-  if (!category || !location) return { title: "Page Not Found" };
+  useEffect(() => {
+    const loadProviders = async () => {
+      const { data } = await supabase
+        .from('provider_applications')
+        .select('*')
+        .eq('status', 'approved');
 
-  return {
-    title: `${category.name} in ${location.name} Lagos | GetHomeServices NG`,
-    description: `Find trusted ${category.name.toLowerCase()} professionals in ${location.name}, Lagos Island.`,
+      const filtered = data?.filter(provider => 
+        provider.services_offered.toLowerCase().includes(params.slug.replace(/-/g, ' ')) &&
+        provider.residential_address.toLowerCase().includes(params.locationSlug.replace(/-/g, ' '))
+      ) || [];
+
+      setProviders(filtered);
+      setLoading(false);
+    };
+
+    loadProviders();
+  }, [params.slug, params.locationSlug]);
+
+  const handleWhatsAppClick = (provider: any) => {
+    window.open(`https://wa.me/${provider.whatsapp}`, '_blank');
   };
-}
 
-export default async function ServiceLocationPage({ params }: Props) {
-  const { slug, locationSlug } = await params;
-
-  const category = categoriesData.find(c => c.slug === slug);
-  const location = locationsData.find(l => l.slug === locationSlug);
-
-  if (!category || !location) notFound();
-
-  const filteredProviders = providersData.filter(provider =>
-    provider.services.some(s =>
-      s.toLowerCase().includes(category.name.toLowerCase().split(" ")[0])
-    ) &&
-    (provider.location.toLowerCase() === location.name.toLowerCase() ||
-     provider.location.toLowerCase().includes(location.name.toLowerCase().split(" ")[0]))
-  );
+  if (loading) return <div className="p-20 text-center">Loading providers...</div>;
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
-      <div className="mb-12">
-        <h1 className="text-5xl font-bold tracking-tight">
-          {category.name} in {location.name}
-        </h1>
-        <p className="text-xl text-gray-600 mt-3">
-          Verified professionals serving {location.name} and nearby areas
-        </p>
+      <h1 className="text-5xl font-bold tracking-tight">
+        {params.slug.replace(/-/g, ' ')} in {params.locationSlug.replace(/-/g, ' ')}
+      </h1>
+      <p className="text-gray-600 mt-2">Approved Professionals</p>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+        {providers.length > 0 ? (
+          providers.map((provider) => (
+            <div key={provider.id} className="border rounded-3xl overflow-hidden hover:shadow-lg transition">
+              <div className="h-56 bg-gray-200 relative">
+                {provider.documents && provider.documents.length > 0 ? (
+                  <img 
+                    src={provider.documents[0]} 
+                    alt={provider.full_name} 
+                    className="w-full h-full object-cover" 
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-6xl">👤</div>
+                )}
+              </div>
+
+              <div className="p-6">
+                <h3 className="font-bold text-xl">{provider.full_name}</h3>
+                <p className="text-sm text-gray-600 mt-1">{provider.services_offered}</p>
+                <p className="text-sm text-gray-500 mt-1">📍 {provider.residential_address}</p>
+
+                <div className="mt-6 flex gap-3">
+                  <button 
+                    onClick={() => router.push(`/providers/${provider.id}`)}
+                    className="flex-1 border border-gray-400 text-gray-700 py-3 rounded-2xl hover:bg-gray-50"
+                  >
+                    View Details
+                  </button>
+                  <button 
+                    onClick={() => handleWhatsAppClick(provider)}
+                    className="flex-1 bg-green-600 text-white py-3 rounded-2xl hover:bg-green-700"
+                  >
+                    WhatsApp
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="col-span-3 text-center py-20 bg-gray-50 rounded-3xl">
+            <p className="text-2xl text-gray-600">No approved providers yet in this area.</p>
+          </div>
+        )}
       </div>
-
-      {filteredProviders.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProviders.map((provider) => (
-            <ProviderCard key={provider.id} provider={provider} />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-24 bg-gray-50 rounded-3xl">
-          <div className="text-6xl mb-6">🕒</div>
-          <h2 className="text-3xl font-semibold text-gray-800">Coming Soon</h2>
-          <p className="mt-4 text-xl text-gray-600 max-w-md mx-auto">
-            We don't have {category.name.toLowerCase()} providers in {location.name} yet.
-          </p>
-          <p className="mt-6 text-gray-500">
-            Our team is actively onboarding more professionals in this area.
-          </p>
-
-          <a 
-            href={`https://wa.me/2348125146666?text=Hi%2C%20I%20need%20a%20${encodeURIComponent(category.name)}%20in%20${encodeURIComponent(location.name)}. Do%20you%20have%20any%20available%20soon%3F`}
-            className="mt-10 inline-block bg-emerald-600 text-white px-10 py-4 rounded-3xl font-semibold hover:bg-emerald-700 transition"
-          >
-            Ask Us About Availability
-          </a>
-        </div>
-      )}
     </div>
   );
 }
