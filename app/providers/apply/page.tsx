@@ -12,6 +12,7 @@ const supabase = createClient(
 export default function ApplyPage() {
   const [providerType, setProviderType] = useState<"individual" | "business">("individual");
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -30,6 +31,11 @@ export default function ApplyPage() {
     "Refrigerator Repair", "Washing Machine Repair", "Microwave Repair", "Painting",
     "Roofing", "Gardening", "Landscaping", "Fumigation", "Waste Disposal",
     "Security Guard", "House Sitting", "Pet Sitting", "Tutoring", "Driving Lessons"
+  ];
+
+  const locations = [
+    "Lekki", "Ajah", "Victoria Island", "Ikoyi", "VGC", "Chevron", "Sangotedo", 
+    "Epe", "Badore", "Langbasa", "Osapa London", "Banana Island"
   ];
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -113,6 +119,7 @@ export default function ApplyPage() {
           experience: formData.get("experience"),
           nin: formData.get("nin"),
           residential_address: formData.get("residential_address"),
+          preferred_location: selectedLocation,
           documents: uploadedUrls,
           status: "pending",
           user_id: user?.id
@@ -170,13 +177,7 @@ export default function ApplyPage() {
                 <label className="block text-sm font-medium mb-2">
                   {providerType === "individual" ? "Full Name" : "Business Name"} <span className="text-red-500">*</span>
                 </label>
-                <input 
-                  type="text" 
-                  name="full_name" 
-                  placeholder={providerType === "individual" ? "Full Name" : "Business Name"} 
-                  required 
-                  className="border border-gray-400 rounded-2xl px-6 py-4 w-full text-gray-900" 
-                />
+                <input type="text" name="full_name" placeholder={providerType === "individual" ? "Full Name" : "Business Name"} required className="border border-gray-400 rounded-2xl px-6 py-4 w-full text-gray-900" />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Phone Number <span className="text-red-500">*</span></label>
@@ -193,7 +194,23 @@ export default function ApplyPage() {
             </div>
           </div>
 
-          {/* 3. Services You Offer - same as before */}
+          {/* Preferred Location */}
+          <div>
+            <h2 className="font-semibold text-2xl mb-6 text-gray-900">Preferred Service Area <span className="text-red-500">*</span></h2>
+            <select 
+              value={selectedLocation} 
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              required
+              className="w-full border border-gray-400 rounded-2xl px-6 py-4 text-gray-900"
+            >
+              <option value="">Select your main service area</option>
+              {["Lekki", "Ajah", "Victoria Island", "Ikoyi", "VGC", "Chevron", "Sangotedo", "Epe", "Badore"].map(loc => (
+                <option key={loc} value={loc}>{loc}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* 3. Services You Offer */}
           <div>
             <h2 className="font-semibold text-2xl mb-6 text-gray-900">3. Services You Offer <span className="text-red-500">*</span></h2>
             <p className="text-sm text-gray-600 mb-3">Select all services you specialize in</p>
