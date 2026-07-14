@@ -1,79 +1,81 @@
-import Image from "next/image";
-import { notFound } from "next/navigation";
-import ReviewCard from "@/components/ReviewCard";
-import providersData from "@/data/providers.json";
-import reviewsData from "@/data/reviews.json";
+import { createClient } from '@supabase/supabase-js';
+import { notFound } from 'next/navigation';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
-export async function generateStaticParams() {
-  return providersData.map((p) => ({ id: p.id.toString() }));
-}
-
-export async function generateMetadata({ params }: Props) {
-  const { id } = await params;
-  const provider = providersData.find(p => p.id === parseInt(id));
-  
-  if (!provider) return { title: "Provider Not Found" };
-
-  return {
-    title: `${provider.name} - GetHomeServices NG`,
-    description: provider.description,
-  };
-}
-
 export default async function ProviderProfile({ params }: Props) {
   const { id } = await params;
-  const provider = providersData.find(p => p.id === parseInt(id));
 
-  if (!provider) notFound();
+  const { data: provider } = await supabase
+    .from('provider_applications')
+    .select('*')
+    .eq('id', id)
+    .single();
 
-  const providerReviews = reviewsData.filter(r => r.providerId === provider.id);
-
-  const avgRating = providerReviews.length > 0 
-    ? (providerReviews.reduce((sum, r) => sum + r.rating, 0) / providerReviews.length).toFixed(1) 
-    : "New";
+  if (!provider || provider.status !== 'approved') notFound();
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-12">
-      <div className="grid md:grid-cols-5 gap-12">
-        <div className="md:col-span-2">
-          <div className="relative aspect-square rounded-3xl overflow-hidden">
-            <Image 
-              src={provider.image} 
-              alt={provider.name} 
-              fill 
-              className="object-cover" 
-            />
+    <div className="max-w-4xl mx-auto px-6 py-16">
+      <div className="flex flex-col md:flex-row gap-12">
+        {/* Photo */}
+        <div className="md:w-1/3">
+          <div className="aspect-square rounded-3xl overflow-hidden bg-gray-200">
+            {provider.documents && provider.documents.length > 0 ? (
+              <img 
+                src={provider.documents[0]} 
+                alt={provider.full_name} 
+                className="w-full h-full object-cover" 
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-8xl">👤</div>
+            )}
           </div>
         </div>
 
-        <div className="md:col-span-3">
-          <h1 className="text-4xl font-bold">{provider.name}</h1>
-          <p className="text-gray-500 mt-2">📍 {provider.location}, Lagos Island</p>
+        {/* Info */}
+        <div className="md:w-2/3">
+          <h1 className="text-5xl font-bold tracking-tight">{provider.full_name}</h1>
+          <p className="text-xl text-gray-600 mt-2">{provider.provider_type}</p>
 
-          <div className="mt-6">
-            <p className="text-lg leading-relaxed">{provider.description}</p>
-          </div>
-
-          <div className="mt-8">
-            <h3 className="font-medium mb-3">Services Offered</h3>
-            <div className="flex flex-wrap gap-3">
-              {provider.services.map((s, i) => (
-                <span key={i} className="bg-blue-50 text-blue-700 px-5 py-2 rounded-2xl text-sm">{s}</span>
-              ))}
+          <div className="mt-8 grid grid-cols-2 gap-8">
+            <div>
+              <p className="text-sm text-gray-500">Phone</p>
+              <p className="text-lg font-medium">{provider.phone}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">WhatsApp</p>
+              <p className="text-lg font-medium">{provider.whatsapp}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Experience</p>
+              <p className="text-lg font-medium">{provider.experience}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Location</p>
+              <p className="text-lg font-medium">{provider.residential_address}</p>
             </div>
           </div>
 
-          <a 
-            href={`https://wa.me/2348125146666?text=Hi%2C%20I%20want%20to%20book%20${encodeURIComponent(provider.name)}`}
-            target="_blank"
-            className="mt-10 block w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-5 rounded-3xl text-xl transition"
-          >
-            Contact this Provider via WhatsApp
-          </a>
+          <div className="mt-10">
+            <h3 className="font-semibold text-2xl mb-4">Services Offered</h3>
+            <p className="text-lg">{provider.services_offered}</p>
+          </div>
+
+          <div className="mt-12">
+            <button 
+              onClick={() => window.open(`https://wa.me/${provider.whatsapp}`, '_blank')}
+              className="w-full bg-green-600 text-white py-6 rounded-3xl text-xl font-semibold hover:bg-green-700"
+            >
+              Chat on WhatsApp
+            </button>
+          </div>
         </div>
       </div>
     </div>
