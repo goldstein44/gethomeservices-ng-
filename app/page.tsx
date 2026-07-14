@@ -5,11 +5,30 @@ import CategoryCard from "@/components/CategoryCard";
 import ProviderCard from "@/components/ProviderCard";
 
 import categoriesData from "@/data/categories.json";
-import providersData from "@/data/providers.json";
 import locationsData from "@/data/locations.json";
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export default function Home() {
-  const featuredProviders = providersData.slice(0, 6);
+  const [featuredProviders, setFeaturedProviders] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadFeatured = async () => {
+      const { data } = await supabase
+        .from('provider_applications')
+        .select('*')
+        .eq('status', 'approved')
+        .limit(6);
+
+      setFeaturedProviders(data || []);
+    };
+
+    loadFeatured();
+  }, []);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -114,20 +133,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURED PROVIDERS */}
+      {/* FEATURED PROVIDERS - Real Approved Providers */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl font-bold tracking-tight text-center mb-4 text-gray-900">
             Featured Providers
           </h2>
           <p className="text-center text-gray-600 max-w-md mx-auto">
-            Verified professionals ready for your next job
+            Recently approved and verified professionals
           </p>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-            {featuredProviders.map((provider) => (
-              <ProviderCard key={provider.id} provider={provider} />
-            ))}
+            {featuredProviders.length > 0 ? (
+              featuredProviders.map((provider) => (
+                <ProviderCard key={provider.id} provider={provider} />
+              ))
+            ) : (
+              <p className="col-span-3 text-center text-gray-500 py-12">No approved providers yet. They will appear here automatically once approved.</p>
+            )}
           </div>
         </div>
       </section>
