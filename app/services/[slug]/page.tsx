@@ -21,12 +21,19 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
         .select('*')
         .eq('status', 'approved');
 
-      setProviders(data || []);
+      // Filter providers by the current service category
+      const filtered = data?.filter(provider => {
+        const services = provider.services_offered.toLowerCase();
+        return services.includes(params.slug.replace(/-/g, ' ')) || 
+               services.includes(params.slug);
+      }) || [];
+
+      setProviders(filtered);
       setLoading(false);
     };
 
     loadProviders();
-  }, []);
+  }, [params.slug]);
 
   const handleWhatsAppClick = async (provider: any) => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -46,42 +53,49 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
       <p className="text-gray-600 mt-2">Approved and Verified Professionals</p>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-        {providers.map((provider) => (
-          <div key={provider.id} className="border rounded-3xl overflow-hidden hover:shadow-lg transition">
-            <div className="h-56 bg-gray-200 relative">
-              {provider.documents && provider.documents.length > 0 ? (
-                <img 
-                  src={provider.documents[0]} 
-                  alt={provider.full_name} 
-                  className="w-full h-full object-cover" 
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-6xl">👤</div>
-              )}
-            </div>
+        {providers.length > 0 ? (
+          providers.map((provider) => (
+            <div key={provider.id} className="border rounded-3xl overflow-hidden hover:shadow-lg transition">
+              <div className="h-56 bg-gray-200 relative">
+                {provider.documents && provider.documents.length > 0 ? (
+                  <img 
+                    src={provider.documents[0]} 
+                    alt={provider.full_name} 
+                    className="w-full h-full object-cover" 
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-6xl">👤</div>
+                )}
+              </div>
 
-            <div className="p-6">
-              <h3 className="font-bold text-xl">{provider.full_name}</h3>
-              <p className="text-sm text-gray-600 mt-1">{provider.services_offered}</p>
-              <p className="text-sm text-gray-500 mt-1">📍 {provider.residential_address}</p>
+              <div className="p-6">
+                <h3 className="font-bold text-xl">{provider.full_name}</h3>
+                <p className="text-sm text-gray-600 mt-1">{provider.services_offered}</p>
+                <p className="text-sm text-gray-500 mt-1">📍 {provider.residential_address}</p>
 
-              <div className="mt-6 flex gap-3">
-                <button 
-                  onClick={() => router.push(`/providers/${provider.id}`)}
-                  className="flex-1 border border-gray-400 text-gray-700 py-3 rounded-2xl hover:bg-gray-50"
-                >
-                  View Details
-                </button>
-                <button 
-                  onClick={() => handleWhatsAppClick(provider)}
-                  className="flex-1 bg-green-600 text-white py-3 rounded-2xl hover:bg-green-700"
-                >
-                  WhatsApp
-                </button>
+                <div className="mt-6 flex gap-3">
+                  <button 
+                    onClick={() => router.push(`/providers/${provider.id}`)}
+                    className="flex-1 border border-gray-400 text-gray-700 py-3 rounded-2xl hover:bg-gray-50"
+                  >
+                    View Details
+                  </button>
+                  <button 
+                    onClick={() => handleWhatsAppClick(provider)}
+                    className="flex-1 bg-green-600 text-white py-3 rounded-2xl hover:bg-green-700"
+                  >
+                    WhatsApp
+                  </button>
+                </div>
               </div>
             </div>
+          ))
+        ) : (
+          <div className="col-span-3 text-center py-20 bg-gray-50 rounded-3xl">
+            <p className="text-2xl text-gray-600">No approved providers yet for this service.</p>
+            <p className="mt-4 text-gray-500">We are actively adding more professionals.</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
