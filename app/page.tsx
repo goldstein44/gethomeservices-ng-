@@ -7,6 +7,7 @@ import ProviderCard from "@/components/ProviderCard";
 import categoriesData from "@/data/categories.json";
 import locationsData from "@/data/locations.json";
 import { createClient } from '@supabase/supabase-js';
+import { useState, useEffect } from "react";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
