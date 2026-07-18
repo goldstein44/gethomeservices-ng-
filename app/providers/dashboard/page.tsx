@@ -12,8 +12,9 @@ const supabase = createClient(
 export default function ProviderDashboard() {
   const [user, setUser] = useState<any>(null);
   const [fullName, setFullName] = useState("");
-  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [clicksThisMonth, setClicksThisMonth] = useState(0);
   const [applications, setApplications] = useState<any[]>([]);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -28,9 +29,19 @@ export default function ProviderDashboard() {
       setUser(session.user);
       setFullName(session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || "Provider");
 
-      // Load profile photo from metadata
+      // Load profile photo
       const photoUrl = session.user.user_metadata?.profile_photo;
       if (photoUrl) setProfilePhoto(photoUrl);
+
+      // Count clicks this month
+      const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
+      const { count } = await supabase
+        .from('whatsapp_clicks')
+        .select('*', { count: 'exact' })
+        .eq('user_id', session.user.id)
+        .gte('clicked_at', startOfMonth);
+
+      setClicksThisMonth(count || 0);
 
       // Fetch applications
       const { data } = await supabase
@@ -45,35 +56,6 @@ export default function ProviderDashboard() {
 
     checkAuth();
   }, [router]);
-
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-
-    const fileExt = file.name.split('.').pop();
-    const fileName = `profile-photos/${user.id}.${fileExt}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from('provider-documents')
-      .upload(fileName, file, { upsert: true });
-
-    if (uploadError) {
-      alert("Photo upload failed");
-      return;
-    }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('provider-documents')
-      .getPublicUrl(fileName);
-
-    // Update user metadata
-    await supabase.auth.updateUser({
-      data: { profile_photo: publicUrl }
-    });
-
-    setProfilePhoto(publicUrl);
-    alert("Profile photo updated successfully!");
-  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -118,14 +100,14 @@ export default function ProviderDashboard() {
 
           <div className="space-y-4 text-sm">
             <p><strong>Email:</strong> {user?.email}</p>
-            <p><strong>Status:</strong> <span className="text-green-600 font-medium">Active Provider</span></p>
+            <p><strong>WhatsApp Clicks this month:</strong> <span className="font-medium">{clicksThisMonth}/5</span></p>
           </div>
 
           <button 
             onClick={() => router.push("/providers/settings")}
             className="mt-8 w-full bg-gray-900 text-white py-4 rounded-2xl hover:bg-black transition"
           >
-            Edit Profile & Settings
+            Profile Settings
           </button>
         </div>
 
@@ -161,6 +143,18 @@ export default function ProviderDashboard() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Upgrade Section */}
+      <div className="mt-12 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-3xl p-12 text-center">
+        <h3 className="text-3xl font-semibold mb-4">Need More WhatsApp Leads?</h3>
+        <p className="text-xl mb-8">Upgrade your plan for more clicks or unlimited access</p>
+        <a 
+          href="/providers/premium"
+          className="inline-block bg-white text-blue-600 px-12 py-5 rounded-3xl font-semibold text-lg hover:bg-gray-100 transition"
+        >
+          View Pricing & Upgrade
+        </a>
       </div>
     </div>
   );
