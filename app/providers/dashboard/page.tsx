@@ -57,6 +57,34 @@ export default function ProviderDashboard() {
     checkAuth();
   }, [router]);
 
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `profile-photos/\( {user.id}. \){fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('provider-documents')
+      .upload(fileName, file, { upsert: true });
+
+    if (uploadError) {
+      alert("Photo upload failed");
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('provider-documents')
+      .getPublicUrl(fileName);
+
+    await supabase.auth.updateUser({
+      data: { profile_photo: publicUrl }
+    });
+
+    setProfilePhoto(publicUrl);
+    alert("Profile photo updated successfully!");
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/");
