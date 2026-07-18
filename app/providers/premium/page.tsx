@@ -1,11 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function PremiumPage() {
   const [loading, setLoading] = useState(false);
+  const [paystackReady, setPaystackReady] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // Check if Paystack is loaded
+    if ((window as any).PaystackPop) {
+      setPaystackReady(true);
+    } else {
+      const checkInterval = setInterval(() => {
+        if ((window as any).PaystackPop) {
+          setPaystackReady(true);
+          clearInterval(checkInterval);
+        }
+      }, 500);
+    }
+  }, []);
 
   const packages = [
     { name: "10 Clicks", price: 5000, clicks: 10 },
@@ -15,6 +30,11 @@ export default function PremiumPage() {
   ];
 
   const handlePurchase = (pkg: any) => {
+    if (!paystackReady) {
+      alert("Payment system is loading. Please wait a moment.");
+      return;
+    }
+
     setLoading(true);
 
     const paystack = new (window as any).PaystackPop();
@@ -22,7 +42,7 @@ export default function PremiumPage() {
     paystack.newTransaction({
       key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
       email: "user@example.com", // Replace with real user email later
-      amount: pkg.price * 100, // in kobo
+      amount: pkg.price * 100,
       currency: "NGN",
       reference: `CLICK-${Date.now()}`,
       callback: (response: any) => {
