@@ -9,8 +9,7 @@ export default function PremiumPage() {
 
   const packages = [
     { name: "10 Clicks", price: 5000, clicks: 10 },
-    { name: "15 Clicks", price: 10000, clicks: 15 },
-    { name: "30 Clicks", price: 18000, clicks: 30 },
+    { name: "30 Clicks", price: 15000, clicks: 30 },
     { name: "50 Clicks", price: 35000, clicks: 50 },
     { name: "100 Clicks", price: 70000, clicks: 100 },
   ];
