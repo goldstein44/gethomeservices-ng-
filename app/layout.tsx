@@ -3,7 +3,12 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'sans-serif']
+});
 
 export const metadata: Metadata = {
   title: "GetHomeServices NG",
@@ -19,9 +24,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="font-sans antialiased">
       <head>
-        <script src="https://js.paystack.co/v1/inline.js" strategy="beforeInteractive"></script>
+        <script src="https://js.paystack.co/v1/inline.js" strategy="beforeInteractive" />
       </head>
       <body className={inter.className}>
         <Navbar />
