@@ -8,7 +8,8 @@ const inter = Inter({
   subsets: ["latin"],
   display: 'swap',
   preload: true,
-  fallback: ['system-ui', 'sans-serif']
+  fallback: ['system-ui', 'sans-serif'],
+  adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
@@ -29,8 +30,17 @@ export default function RootLayout({
       <head>
         <Script 
           src="https://js.paystack.co/v1/inline.js" 
-          strategy="beforeInteractive"
+          strategy="beforeInteractive" 
         />
+        <style>
+          {`
+            body {
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+              text-rendering: optimizeLegibility;
+            }
+          `}
+        </style>
       </head>
       <body className={inter.className}>
         <Navbar />
