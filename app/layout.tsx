@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Script from "next/script";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -26,7 +27,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="font-sans antialiased">
       <head>
-        <script src="https://js.paystack.co/v1/inline.js" strategy="beforeInteractive" />
+        <Script 
+          src="https://js.paystack.co/v1/inline.js" 
+          strategy="beforeInteractive"
+        />
       </head>
       <body className={inter.className}>
         <Navbar />
