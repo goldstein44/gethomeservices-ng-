@@ -18,11 +18,16 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const ADMIN_USERNAME = process.env.NEXT_PUBLIC_ADMIN_USERNAME || "goldstein4";
-  const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "epignosko";
+  const ADMIN_USERNAME = process.env.NEXT_PUBLIC_ADMIN_USERNAME;
+  const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!ADMIN_USERNAME || !ADMIN_PASSWORD) {
+      setError("Admin credentials not configured");
+      return;
+    }
+
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       fetchApplications();
