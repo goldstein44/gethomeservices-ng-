@@ -15,7 +15,10 @@ export default function ProviderDashboard() {
   const [clicksThisMonth, setClicksThisMonth] = useState(0);
   const [applications, setApplications] = useState<any[]>([]);
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [bio, setBio] = useState("");
+  const [previousWork, setPreviousWork] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,11 +32,22 @@ export default function ProviderDashboard() {
       setUser(session.user);
       setFullName(session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || "Provider");
 
-      // Load profile photo
       const photoUrl = session.user.user_metadata?.profile_photo;
       if (photoUrl) setProfilePhoto(photoUrl);
 
-      // Count clicks this month
+      // Load profile data
+      const { data } = await supabase
+        .from('provider_applications')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .limit(1);
+
+      if (data && data.length > 0) {
+        setBio(data[0].bio || "");
+        setPreviousWork(data[0].previous_work || []);
+      }
+
+      // Count clicks
       const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
       const { count } = await supabase
         .from('whatsapp_clicks')
@@ -42,47 +56,56 @@ export default function ProviderDashboard() {
         .gte('clicked_at', startOfMonth);
 
       setClicksThisMonth(count || 0);
-
-      // Fetch applications
-      const { data } = await supabase
-        .from('provider_applications')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .order('created_at', { ascending: false });
-
-      setApplications(data || []);
       setLoading(false);
     };
 
     checkAuth();
   }, [router]);
 
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
+  const handleBioSave = async () => {
+    setSaving(true);
+    const { data: { session } } = await supabase.auth.getSession();
 
-    const fileExt = file.name.split('.').pop();
-    const fileName = `profile-photos/\( {user.id}. \){fileExt}`;
+    await supabase
+      .from('provider_applications')
+      .update({ bio })
+      .eq('user_id', session?.user.id);
 
-    const { error: uploadError } = await supabase.storage
-      .from('provider-documents')
-      .upload(fileName, file, { upsert: true });
+    alert("Bio updated!");
+    setSaving(false);
+  };
 
-    if (uploadError) {
-      alert("Photo upload failed");
-      return;
+  const handlePreviousWorkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || !user) return;
+
+    const newUrls: string[] = [];
+
+    for (const file of files) {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `previous-work/\( {user.id}- \){Date.now()}.${fileExt}`;
+
+      const { error } = await supabase.storage
+        .from('provider-documents')
+        .upload(fileName, file, { upsert: true });
+
+      if (!error) {
+        const { data: { publicUrl } } = supabase.storage
+          .from('provider-documents')
+          .getPublicUrl(fileName);
+        newUrls.push(publicUrl);
+      }
     }
 
-    const { data: { publicUrl } } = supabase.storage
-      .from('provider-documents')
-      .getPublicUrl(fileName);
+    const updatedWork = [...previousWork, ...newUrls];
+    setPreviousWork(updatedWork);
 
-    await supabase.auth.updateUser({
-      data: { profile_photo: publicUrl }
-    });
+    await supabase
+      .from('provider_applications')
+      .update({ previous_work: updatedWork })
+      .eq('user_id', user.id);
 
-    setProfilePhoto(publicUrl);
-    alert("Profile photo updated successfully!");
+    alert("Previous work photos added!");
   };
 
   const handleLogout = async () => {
@@ -97,7 +120,7 @@ export default function ProviderDashboard() {
       <div className="flex justify-between items-center mb-10">
         <div>
           <h1 className="text-4xl font-bold">Provider Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome, <span className="font-semibold text-gray-900">{fullName}</span></p>
+          <p className="text-gray-600 mt-1">Welcome, {fullName}</p>
         </div>
         <button
           onClick={handleLogout}
@@ -170,6 +193,34 @@ export default function ProviderDashboard() {
               ))}
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Bio & Previous Work */}
+      <div className="mt-12 bg-white border rounded-3xl p-8">
+        <h2 className="font-semibold text-2xl mb-6">Bio & Previous Work</h2>
+        
+        <div className="mb-8">
+          <label className="block text-sm font-medium mb-2">Brief Bio</label>
+          <textarea 
+            value={bio} 
+            onChange={(e) => setBio(e.target.value)}
+            className="w-full border border-gray-400 rounded-2xl px-6 py-4 h-32"
+            placeholder="Tell clients about your experience and why they should choose you..."
+          />
+          <button onClick={handleBioSave} disabled={saving} className="mt-4 bg-blue-600 text-white px-8 py-3 rounded-2xl">
+            Save Bio
+          </button>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Previous Work Photos</label>
+          <input type="file" multiple accept="image/*" onChange={handlePreviousWorkUpload} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+          <div className="mt-4 grid grid-cols-4 gap-4">
+            {previousWork.map((url, i) => (
+              <img key={i} src={url} alt="Previous work" className="rounded-xl aspect-square object-cover" />
+            ))}
+          </div>
         </div>
       </div>
 
