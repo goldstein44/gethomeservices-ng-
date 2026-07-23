@@ -3,13 +3,15 @@
 import { useState, useEffect } from "react";
 import { createClient } from '@supabase/supabase-js';
 import { useRouter } from "next/navigation";
+import { use } from "react";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-export default function ServicePage({ params }: { params: { slug: string } }) {
+export default function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = use(params);
   const [providers, setProviders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -26,11 +28,10 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
           console.error("Error fetching providers:", error);
           setProviders([]);
         } else {
-          // Simple filtering by service name
           const filtered = data?.filter(provider => {
             if (!provider.services_offered) return false;
             const services = provider.services_offered.toLowerCase();
-            const slug = params.slug.toLowerCase().replace(/-/g, ' ');
+            const slug = resolvedParams.slug.toLowerCase().replace(/-/g, ' ');
             return services.includes(slug);
           }) || [];
 
@@ -45,7 +46,7 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
     };
 
     loadProviders();
-  }, [params.slug]);
+  }, [resolvedParams.slug]);
 
   const handleWhatsAppClick = async (provider: any) => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -61,7 +62,7 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
-      <h1 className="text-5xl font-bold tracking-tight capitalize">{params.slug.replace(/-/g, ' ')} Services</h1>
+      <h1 className="text-5xl font-bold tracking-tight capitalize">{resolvedParams.slug.replace(/-/g, ' ')} Services</h1>
       <p className="text-gray-600 mt-2">Approved and Verified Professionals</p>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
