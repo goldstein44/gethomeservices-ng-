@@ -97,7 +97,7 @@ export default function ProviderDashboard() {
       <div className="flex justify-between items-center mb-10">
         <div>
           <h1 className="text-4xl font-bold">Provider Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome, {fullName}</p>
+          <p className="text-gray-600 mt-1">Welcome, <span className="font-semibold text-gray-900">{fullName}</span></p>
         </div>
         <button
           onClick={handleLogout}
@@ -110,7 +110,7 @@ export default function ProviderDashboard() {
       <div className="grid md:grid-cols-12 gap-8">
         {/* Profile Sidebar */}
         <div className="md:col-span-4 bg-white border rounded-3xl p-8 h-fit">
-          <h2 className="font-semibold text-2xl mb-6">My Profile</h2>
+          <h2 className="font-semibold text-2xl mb-6 text-gray-900">My Profile</h2>
 
           <div className="flex flex-col items-center mb-8">
             <div className="w-32 h-32 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-md">
@@ -128,7 +128,7 @@ export default function ProviderDashboard() {
 
           <div className="space-y-4 text-sm">
             <p><strong>Email:</strong> {user?.email}</p>
-            <p><strong>WhatsApp Clicks this month:</strong> <span className="font-medium">{clicksThisMonth}/5</span></p>
+            <p><strong>WhatsApp Clicks this month:</strong> <span className="font-medium text-gray-900">{clicksThisMonth}/5</span></p>
           </div>
 
           <button 
@@ -141,7 +141,7 @@ export default function ProviderDashboard() {
 
         {/* Applications */}
         <div className="md:col-span-8 bg-white border rounded-3xl p-8">
-          <h2 className="font-semibold text-2xl mb-6">My Applications</h2>
+          <h2 className="font-semibold text-2xl mb-6 text-gray-900">My Applications</h2>
 
           {applications.length === 0 ? (
             <div className="text-center py-20">
@@ -155,7 +155,7 @@ export default function ProviderDashboard() {
               {applications.map((app) => (
                 <div key={app.id} className="border rounded-2xl p-6 flex flex-col md:flex-row justify-between gap-4">
                   <div className="flex-1">
-                    <p className="font-semibold text-lg">{app.full_name}</p>
+                    <p className="font-semibold text-lg text-gray-900">{app.full_name}</p>
                     <p className="text-sm text-gray-600 mt-1">{app.services_offered}</p>
                     <p className="text-xs text-gray-500 mt-2">
                       Applied on {new Date(app.created_at).toLocaleDateString()}
