@@ -127,8 +127,8 @@ export default function ProviderDashboard() {
           </div>
 
           <div className="space-y-4 text-sm">
-            <p><strong>Email:</strong> {user?.email}</p>
-            <p><strong>WhatsApp Clicks this month:</strong> <span className="font-medium text-gray-900">{clicksThisMonth}/5</span></p>
+            <p><strong className="text-gray-900">Email:</strong> {user?.email}</p>
+            <p><strong className="text-gray-900">WhatsApp Clicks this month:</strong> <span className="font-medium text-gray-900">{clicksThisMonth}/5</span></p>
           </div>
 
           <button 
