@@ -62,23 +62,23 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-10 rounded-3xl shadow-xl max-w-md w-full">
-        <h1 className="text-3xl font-bold text-center mb-8">Create Account</h1>
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-900">Create Account</h1>
 
         <form onSubmit={handleSignup} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2">I am a:</label>
+            <label className="block text-lg font-semibold mb-2 text-gray-900">I am a:</label>
             <div className="flex gap-4">
               <button
                 type="button"
                 onClick={() => setRole("client")}
-                className={`flex-1 py-4 rounded-2xl ${role === "client" ? "bg-blue-600 text-white" : "border border-gray-400"}`}
+                className={`flex-1 py-4 rounded-2xl text-lg font-medium ${role === "client" ? "bg-blue-600 text-white" : "border border-gray-400 text-gray-900"}`}
               >
                 Client
               </button>
               <button
                 type="button"
                 onClick={() => setRole("provider")}
-                className={`flex-1 py-4 rounded-2xl ${role === "provider" ? "bg-blue-600 text-white" : "border border-gray-400"}`}
+                className={`flex-1 py-4 rounded-2xl text-lg font-medium ${role === "provider" ? "bg-blue-600 text-white" : "border border-gray-400 text-gray-900"}`}
               >
                 Service Provider
               </button>
@@ -86,7 +86,7 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Full Name</label>
+            <label className="block text-lg font-semibold mb-2 text-gray-900">Full Name</label>
             <input 
               type="text" 
               value={fullName} 
@@ -97,7 +97,7 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
+            <label className="block text-lg font-semibold mb-2 text-gray-900">Email</label>
             <input 
               type="email" 
               value={email} 
@@ -108,7 +108,7 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Password</label>
+            <label className="block text-lg font-semibold mb-2 text-gray-900">Password</label>
             <div className="relative">
               <input 
                 type={showPassword ? "text" : "password"} 
@@ -127,7 +127,7 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <label className="flex items-start gap-3 mt-6 cursor-pointer text-sm">
+          <label className="flex items-start gap-3 mt-6 cursor-pointer text-sm text-gray-900">
             <input type="checkbox" required className="mt-1" />
             <span>By signing up, you agree to our <a href="/terms-of-service" className="text-blue-600 hover:underline">Terms & Conditions</a></span>
           </label>
