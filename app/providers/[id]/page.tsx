@@ -47,11 +47,11 @@ export default function ProviderProfile({ params }: { params: Promise<{ id: stri
   if (!provider) return <div className="p-20 text-center">Provider not found.</div>;
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-16">
+    <div className="max-w-5xl mx-auto px-6 py-16">
       <div className="flex flex-col md:flex-row gap-12">
         {/* Photo */}
-        <div className="md:w-1/3">
-          <div className="aspect-square rounded-3xl overflow-hidden bg-gray-200">
+        <div className="md:w-2/5">
+          <div className="aspect-square rounded-3xl overflow-hidden bg-gray-200 shadow-lg">
             {provider.documents && provider.documents.length > 0 ? (
               <img 
                 src={provider.documents[0]} 
@@ -64,36 +64,49 @@ export default function ProviderProfile({ params }: { params: Promise<{ id: stri
           </div>
         </div>
 
-        {/* Info */}
-        <div className="md:w-2/3">
+        {/* Main Info */}
+        <div className="md:w-3/5">
           <h1 className="text-5xl font-bold tracking-tight">{provider.full_name}</h1>
-          <p className="text-xl text-gray-600 mt-2">{provider.provider_type}</p>
+          <p className="text-2xl text-gray-600 mt-2">{provider.provider_type}</p>
 
-          <div className="mt-8 grid grid-cols-2 gap-8">
+          <div className="mt-10 grid grid-cols-2 gap-8 text-lg">
             <div>
               <p className="text-sm text-gray-500">Phone</p>
-              <p className="text-lg font-medium">{provider.phone}</p>
+              <p className="font-medium">{provider.phone}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">WhatsApp</p>
-              <p className="text-lg font-medium">{provider.whatsapp}</p>
+              <p className="font-medium">{provider.whatsapp}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Experience</p>
-              <p className="text-lg font-medium">{provider.experience}</p>
+              <p className="font-medium">{provider.experience}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Location</p>
-              <p className="text-lg font-medium">{provider.residential_address}</p>
+              <p className="font-medium">{provider.residential_address}</p>
             </div>
           </div>
 
-          <div className="mt-10">
-            <h3 className="font-semibold text-2xl mb-4">Services Offered</h3>
-            <p className="text-lg">{provider.services_offered}</p>
+          <div className="mt-12">
+            <h3 className="font-semibold text-3xl mb-4">About Me</h3>
+            <p className="text-lg leading-relaxed text-gray-700">
+              {provider.bio || "Experienced professional with a commitment to quality service."}
+            </p>
           </div>
 
-          <div className="mt-12">
+          {provider.previous_work && provider.previous_work.length > 0 && (
+            <div className="mt-12">
+              <h3 className="font-semibold text-3xl mb-6">Previous Work</h3>
+              <div className="grid grid-cols-3 gap-4">
+                {provider.previous_work.map((url: string, i: number) => (
+                  <img key={i} src={url} alt="Previous work" className="rounded-2xl aspect-square object-cover" />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="mt-16">
             <button 
               onClick={handleWhatsAppClick}
               className="w-full bg-green-600 text-white py-6 rounded-3xl text-xl font-semibold hover:bg-green-700"
