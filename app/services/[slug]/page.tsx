@@ -16,21 +16,32 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
 
   useEffect(() => {
     const loadProviders = async () => {
-      const { data } = await supabase
-        .from('provider_applications')
-        .select('*')
-        .eq('status', 'approved');
+      try {
+        const { data, error } = await supabase
+          .from('provider_applications')
+          .select('*')
+          .eq('status', 'approved');
 
-      // Filter providers by the selected service category
-      const filtered = data?.filter(provider => {
-        if (!provider.services_offered) return false;
-        const servicesLower = provider.services_offered.toLowerCase();
-        const slugLower = params.slug.replace(/-/g, ' ').toLowerCase();
-        return servicesLower.includes(slugLower) || servicesLower.includes(params.slug.toLowerCase());
-      }) || [];
+        if (error) {
+          console.error("Error fetching providers:", error);
+          setProviders([]);
+        } else {
+          // Filter providers by the selected service category
+          const filtered = data?.filter(provider => {
+            if (!provider.services_offered) return false;
+            const servicesLower = provider.services_offered.toLowerCase();
+            const slugLower = params.slug.replace(/-/g, ' ').toLowerCase();
+            return servicesLower.includes(slugLower) || servicesLower.includes(params.slug.toLowerCase());
+          }) || [];
 
-      setProviders(filtered);
-      setLoading(false);
+          setProviders(filtered);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        setProviders([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadProviders();
