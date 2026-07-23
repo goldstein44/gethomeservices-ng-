@@ -1,25 +1,50 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { createClient } from '@supabase/supabase-js';
-import { notFound } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import { use } from "react";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
+export default function ProviderProfile({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+  const [provider, setProvider] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-export default async function ProviderProfile({ params }: Props) {
-  const { id } = await params;
+  useEffect(() => {
+    const loadProvider = async () => {
+      const { data, error } = await supabase
+        .from('provider_applications')
+        .select('*')
+        .eq('id', resolvedParams.id)
+        .single();
 
-  const { data: provider } = await supabase
-    .from('provider_applications')
-    .select('*')
-    .eq('id', id)
-    .single();
+      if (error || !data || data.status !== 'approved') {
+        router.push("/services");
+        return;
+      }
 
-  if (!provider || provider.status !== 'approved') notFound();
+      setProvider(data);
+      setLoading(false);
+    };
+
+    loadProvider();
+  }, [resolvedParams.id, router]);
+
+  const handleWhatsAppClick = () => {
+    if (provider) {
+      window.open(`https://wa.me/${provider.whatsapp}`, '_blank');
+    }
+  };
+
+  if (loading) return <div className="p-20 text-center">Loading profile...</div>;
+
+  if (!provider) return <div className="p-20 text-center">Provider not found.</div>;
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-16">
@@ -70,7 +95,7 @@ export default async function ProviderProfile({ params }: Props) {
 
           <div className="mt-12">
             <button 
-              onClick={() => window.open(`https://wa.me/${provider.whatsapp}`, '_blank')}
+              onClick={handleWhatsAppClick}
               className="w-full bg-green-600 text-white py-6 rounded-3xl text-xl font-semibold hover:bg-green-700"
             >
               Chat on WhatsApp
