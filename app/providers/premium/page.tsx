@@ -9,17 +9,12 @@ export default function PremiumPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if Paystack is loaded
-    if ((window as any).PaystackPop) {
-      setPaystackReady(true);
-    } else {
-      const checkInterval = setInterval(() => {
-        if ((window as any).PaystackPop) {
-          setPaystackReady(true);
-          clearInterval(checkInterval);
-        }
-      }, 500);
-    }
+    const timer = setTimeout(() => {
+      if ((window as any).PaystackPop) {
+        setPaystackReady(true);
+      }
+    }, 1500);
+    return () => clearTimeout(timer);
   }, []);
 
   const packages = [
@@ -41,7 +36,7 @@ export default function PremiumPage() {
 
     paystack.newTransaction({
       key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
-      email: "user@example.com", // Replace with real user email later
+      email: "user@example.com",
       amount: pkg.price * 100,
       currency: "NGN",
       reference: `CLICK-${Date.now()}`,
@@ -56,32 +51,32 @@ export default function PremiumPage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-20">
       <div className="text-center mb-16">
-        <h1 className="text-5xl font-bold">Get More Leads</h1>
+        <h1 className="text-5xl font-bold text-gray-900">Get More Leads</h1>
         <p className="text-xl text-gray-600 mt-4">Choose a package or go unlimited</p>
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {/* Free Plan */}
         <div className="border rounded-3xl p-8 bg-white">
-          <h3 className="text-2xl font-semibold">Free Plan</h3>
-          <p className="text-5xl font-bold mt-4">5 Clicks</p>
-          <p className="text-gray-500">per month</p>
-          <ul className="mt-8 space-y-3 text-sm">
-            <li>✓ Basic access</li>
-            <li>✓ 5 WhatsApp contacts</li>
+          <h3 className="text-3xl font-semibold text-gray-900">Free Plan</h3>
+          <p className="text-6xl font-bold mt-4 text-gray-900">5 Clicks</p>
+          <p className="text-gray-500 text-lg">per month</p>
+          <ul className="mt-8 space-y-3 text-base">
+            <li className="text-gray-900">✓ Basic access</li>
+            <li className="text-gray-900">✓ 5 WhatsApp contacts</li>
           </ul>
-          <div className="mt-10 text-center text-gray-500 text-sm">Current Plan</div>
+          <div className="mt-10 text-center text-emerald-600 font-semibold">Current Plan</div>
         </div>
 
         {/* Click Packages */}
         {packages.map((pkg, i) => (
           <div key={i} className="border rounded-3xl p-8 bg-white hover:border-blue-600 transition">
-            <h3 className="text-2xl font-semibold">{pkg.name}</h3>
-            <p className="text-5xl font-bold mt-4">₦{pkg.price.toLocaleString()}</p>
+            <h3 className="text-3xl font-semibold text-gray-900">{pkg.name}</h3>
+            <p className="text-6xl font-bold mt-4 text-gray-900">₦{pkg.price.toLocaleString()}</p>
             <button 
               onClick={() => handlePurchase(pkg)}
               disabled={loading}
-              className="mt-10 w-full bg-blue-600 text-white py-4 rounded-2xl hover:bg-blue-700 disabled:bg-gray-400"
+              className="mt-10 w-full bg-blue-600 text-white py-4 rounded-2xl hover:bg-blue-700 disabled:bg-gray-400 text-lg font-semibold"
             >
               Buy Now
             </button>
@@ -91,15 +86,15 @@ export default function PremiumPage() {
         {/* Monthly Unlimited */}
         <div className="border border-emerald-600 rounded-3xl p-8 bg-emerald-50">
           <div className="bg-emerald-600 text-white text-xs font-bold px-4 py-1 rounded-full w-fit">MOST POPULAR</div>
-          <h3 className="text-2xl font-semibold mt-6">Monthly Unlimited</h3>
-          <p className="text-5xl font-bold mt-4">₦18,000</p>
-          <p className="text-emerald-600">per month</p>
-          <ul className="mt-8 space-y-3 text-sm">
+          <h3 className="text-3xl font-semibold mt-6 text-gray-900">Monthly Unlimited</h3>
+          <p className="text-6xl font-bold mt-4 text-gray-900">₦18,000</p>
+          <p className="text-emerald-600 text-lg">per month</p>
+          <ul className="mt-8 space-y-3 text-base text-gray-900">
             <li>✓ Unlimited WhatsApp contacts</li>
             <li>✓ Featured listing</li>
             <li>✓ Priority support</li>
           </ul>
-          <button className="mt-10 w-full bg-emerald-600 text-white py-4 rounded-2xl hover:bg-emerald-700">
+          <button className="mt-10 w-full bg-emerald-600 text-white py-4 rounded-2xl hover:bg-emerald-700 text-lg font-semibold">
             Upgrade to Unlimited
           </button>
         </div>
