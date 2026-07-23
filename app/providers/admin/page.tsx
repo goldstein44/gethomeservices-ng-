@@ -18,8 +18,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const ADMIN_USERNAME = "goldstein4";
-  const ADMIN_PASSWORD = "epignosko";
+  const ADMIN_USERNAME = process.env.NEXT_PUBLIC_ADMIN_USERNAME || "goldstein4";
+  const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "epignosko";
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
