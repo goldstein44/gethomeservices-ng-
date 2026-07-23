@@ -26,12 +26,12 @@ export default function ServicePage({ params }: { params: { slug: string } }) {
           console.error("Error fetching providers:", error);
           setProviders([]);
         } else {
-          // Filter providers by the selected service category
+          // Simple filtering by service name
           const filtered = data?.filter(provider => {
             if (!provider.services_offered) return false;
-            const servicesLower = provider.services_offered.toLowerCase();
-            const slugLower = params.slug.replace(/-/g, ' ').toLowerCase();
-            return servicesLower.includes(slugLower) || servicesLower.includes(params.slug.toLowerCase());
+            const services = provider.services_offered.toLowerCase();
+            const slug = params.slug.toLowerCase().replace(/-/g, ' ');
+            return services.includes(slug);
           }) || [];
 
           setProviders(filtered);
