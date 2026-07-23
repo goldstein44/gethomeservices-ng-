@@ -39,11 +39,11 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-10 rounded-3xl shadow-xl max-w-md w-full">
-        <h1 className="text-3xl font-bold text-center mb-8">Login to Your Account</h1>
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-900">Login to Your Account</h1>
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
+            <label className="block text-lg font-semibold mb-2 text-gray-900">Email</label>
             <input
               type="email"
               value={email}
@@ -54,7 +54,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Password</label>
+            <label className="block text-lg font-semibold mb-2 text-gray-900">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
